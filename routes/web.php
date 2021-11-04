@@ -1,7 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Livewire\SubjectsLivewire;
+use App\Http\Livewire\SectionsLivewire;
+use App\Http\Livewire\StudentsLivewire;
+use App\Http\Livewire\TeachersLivewire;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,22 +16,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get("/", function () {
+    return view("auth.login");
+})->middleware(["auth:sanctum", "verified"]);
 
-// Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-//     return view('dashboard');
-// })->name('dashboard');
-
-
-Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
-    Route::view('dashboard', 'dashboard')->name('dashboard');
-    Route::view('forms', 'forms')->name('forms');
-    Route::view('cards', 'cards')->name('cards');
-    Route::view('charts', 'charts')->name('charts');
-    Route::view('buttons', 'buttons')->name('buttons');
-    Route::view('modals', 'modals')->name('modals');
-    Route::view('tables', 'tables')->name('tables');
-    Route::view('calendar', 'calendar')->name('calendar');
-});
+Route::group(
+    ["prefix" => "dashboard", "middleware" => ["auth:sanctum", "verified"]],
+    function () {
+        Route::view("", "dashboard")->name("dashboard");
+        Route::get("/sections", SectionsLivewire::class)->name("sections");
+        Route::get("/students", StudentsLivewire::class)->name("students");
+        Route::get("/subjects", SubjectsLivewire::class)->name("subjects");
+        Route::get("/teachers", TeachersLivewire::class)->name("teachers");
+    }
+);
