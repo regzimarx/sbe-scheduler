@@ -98,9 +98,9 @@ class DatabaseSeeder extends Seeder
         }
 
         // Seed other DBs
-        Subject::factory(15)->create();
-        Student::factory(12)->create();
-        Teacher::factory(15)->create();
-        Section::factory(15)->create();
+        Subject::factory(50)->create();
+        Student::factory(50)->create();
+        Teacher::factory(50)->create();
+        Section::factory(50)->create();
     }
 }
