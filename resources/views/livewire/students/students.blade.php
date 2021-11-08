@@ -66,6 +66,9 @@
         @if ($openDelete)
             @include('livewire.students.student-delete-modal')
         @endif
+        @if ($removeStudent)
+            @include('livewire.sections.section-remove-student-modal')
+        @endif
         <div class="w-full overflow-x-auto">
             <table class="table-auto w-full">
                 <thead>
@@ -238,8 +241,80 @@
                                             d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                     </svg>
                                 </button>
+
+                                <!-- Toggle buttons -->
+
+                                @if ($openMore && $student->student_id == $studentMore->student_id)
+                                    <button wire:click.prevent="closeMoreModal()"
+                                        class="mt-4 mb-4 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-gray-400 border border-transparent rounded-md active:bg-gray-600 hover:bg-gray-700 focus:outline-none focus:shadow-outline-gray">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M5 15l7-7 7 7" />
+                                        </svg>
+                                    </button>
+                                @else
+                                    <button wire:click.prevent="openMoreModal({{ $student->student_id }})"
+                                        class="mt-4 mb-4 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-gray-400 border border-transparent rounded-md active:bg-gray-600 hover:bg-gray-700 focus:outline-none focus:shadow-outline-gray">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </button>
+                                @endif
                             </td>
                         </tr>
+                        @if ($openMore && $student->student_id == $studentMore->student_id)
+                            <tr>
+                                <td colspan="6">
+                                    <div class="m-10">
+                                        <p
+                                            class="mb-5 text-lg text-center font-semibold text-gray-700 dark:text-gray-300">
+                                            More information about this student
+                                        </p>
+                                        @if ($student->section->count() != 0)
+                                            @foreach ($student->section as $section)
+                                                <div class="bg-purple-700 text-white rounded-lg w-max-content p-5">
+                                                    <p>Student is
+                                                        enrolled to
+                                                        section <span
+                                                            class="text-bold">{{ $section->section_name }}</span>
+                                                    </p>
+                                                    <button
+                                                        wire:click.prevent="removeStudentModal({{ $student->student_id }})"
+                                                        class="mt-4 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-800 border border-transparent rounded-md active:bg-purple-500 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple flex items-center justify-center">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                        </svg> Remove student from section
+                                                    </button>
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            <div class="bg-purple-700 rounded-lg max-w-md p-5">
+                                                <p class="text-white">Add student to section</p>
+                                                <select wire:model="section_id"
+                                                    class="block w-full mt-4 mb-4 dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray">
+                                                    <option value="">Please select a section to add to</option>
+                                                    @foreach ($sections_for_grade_level as $section)
+                                                        <option value="{{ $section->section_id }}">
+                                                            {{ $section->section_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                                <button
+                                                    class="w-full px-5 py-3 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg sm:w-auto sm:px-4 sm:py-2 active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+                                                    wire:click.prevent="addStudentToSection()" type="button">
+                                                    Add student
+                                                </button>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        @endif
                     @endforeach
                 </tbody>
             </table>

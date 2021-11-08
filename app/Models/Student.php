@@ -22,4 +22,14 @@ class Student extends Model
         "department_dept_id",
         "gpa",
     ];
+
+    public function section()
+    {
+        return $this->belongsToMany(
+            Section::class,
+            "students_classes",
+            "student_student_id",
+            "section_section_id"
+        );
+    }
 }
