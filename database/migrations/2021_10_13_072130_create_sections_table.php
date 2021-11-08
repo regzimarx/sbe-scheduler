@@ -19,6 +19,7 @@ class CreateSectionsTable extends Migration
             $table->increments("section_id");
             $table->string("section_name");
             $table->boolean("is_star");
+            $table->integer("grade_level");
             $table->foreignIdFor(Department::class);
         });
     }

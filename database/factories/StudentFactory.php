@@ -28,7 +28,12 @@ class StudentFactory extends Factory
             "first_name" => $this->faker->firstName(),
             "middle_name" => $this->faker->lastName(),
             "last_name" => $this->faker->lastName(),
-            "grade_level" => ++$this->number,
+            "grade_level" => function () {
+                if ($this->number == 12) {
+                    $this->number = 0;
+                }
+                return ++$this->number;
+            },
             "department_dept_id" => function () {
                 if (in_array($this->number, [1, 2, 3, 4, 5, 6])) {
                     return 1;

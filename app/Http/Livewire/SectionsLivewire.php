@@ -17,11 +17,14 @@ class SectionsLivewire extends Component
     public $section, $section_id, $is_star, $section_name, $department_dept_id;
     public $openEdit,
         $openDelete,
+        $openMore,
+        $openAddStudents,
         $openMakestar = false;
     public $search = "";
     public $orderBy = "section_id";
     public $orderByOrder = "asc";
     public $star_section_classes = [];
+    public $students_per_grade_level = [];
 
     public function render()
     {
@@ -188,6 +191,7 @@ class SectionsLivewire extends Component
                 "department_dept_id",
                 Auth::user()->department_dept_id
             )
+                ->where("grade_level", $new_star_section->grade_level)
                 ->orderBy("gpa", "desc")
                 ->limit(40)
                 ->get();
@@ -209,6 +213,32 @@ class SectionsLivewire extends Component
             "message",
             "Star section updated. Top 40 students assigned to star section."
         );
+    }
+
+    // ======================= OPEN MORE ===================================
+
+    public function openMoreModal($section_id)
+    {
+        $this->section = Section::findOrFail($section_id);
+        $this->openMore = true;
+    }
+
+    public function closeMoreModal()
+    {
+        $this->section = null;
+        $this->openMore = false;
+    }
+
+    // ================ ADD STUDENTS TO SECTION ==================
+
+    public function openAddStudentsToSection($section_id)
+    {
+        $section = Section::findOrFail($section_id)->first();
+        $this->students_per_grade_level = Student::where(
+            "grade_level",
+            $section->grade_level
+        )->get();
+        $this->openAddStudents = true;
     }
 
     public function clear()

@@ -17,6 +17,17 @@ class Section extends Model
         "section_id",
         "section_name",
         "is_star",
+        "grade_level",
         "department_dept_id",
     ];
+
+    public function students()
+    {
+        return $this->belongsToMany(
+            Student::class,
+            "students_classes",
+            "section_section_id",
+            "student_student_id"
+        );
+    }
 }
