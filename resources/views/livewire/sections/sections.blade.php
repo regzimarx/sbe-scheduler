@@ -62,8 +62,8 @@
         @if ($openMakestar)
             @include('livewire.sections.section-makestar-modal')
         @endif
-        @if ($openAddStudents)
-            @include('livewire.sections.section-add-students-modal')
+        @if ($removeStudent)
+            @include('livewire.sections.section-remove-student-modal')
         @endif
         <div class="w-full overflow-x-auto">
             <table class="table-auto w-full">
@@ -245,7 +245,8 @@
                                                         {{ $student->last_name }},<br>{{ $student->first_name }}<br>
                                                         {{ $student->middle_name }}
                                                     </p>
-                                                    <button wire:click.prevent="edit({{ $sec->section_id }})"
+                                                    <button
+                                                        wire:click.prevent="removeStudentModal({{ $student->student_id }})"
                                                         class="mt-4 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-400 border border-transparent rounded-md active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
                                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
                                                             fill="none" viewBox="0 0 24 24" stroke="currentColor">

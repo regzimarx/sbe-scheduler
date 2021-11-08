@@ -14,11 +14,16 @@ class SectionsLivewire extends Component
 {
     use WithPagination;
 
-    public $section, $section_id, $is_star, $section_name, $department_dept_id;
+    public $section,
+        $section_id,
+        $is_star,
+        $section_name,
+        $department_dept_id,
+        $student;
     public $openEdit,
         $openDelete,
         $openMore,
-        $openAddStudents,
+        $removeStudent,
         $openMakestar = false;
     public $search = "";
     public $orderBy = "section_id";
@@ -38,7 +43,7 @@ class SectionsLivewire extends Component
                 Auth::user()->department_dept_id
             )
                 ->orderBy($this->orderBy, $this->orderByOrder)
-                ->paginate(20);
+                ->paginate(10);
 
         return view("livewire.sections.sections", ["sections" => $sections]);
     }
@@ -229,16 +234,28 @@ class SectionsLivewire extends Component
         $this->openMore = false;
     }
 
-    // ================ ADD STUDENTS TO SECTION ==================
+    // ================ Remove student from section ==================
 
-    public function openAddStudentsToSection($section_id)
+    public function removeStudentModal($student_id)
     {
-        $section = Section::findOrFail($section_id)->first();
-        $this->students_per_grade_level = Student::where(
-            "grade_level",
-            $section->grade_level
-        )->get();
-        $this->openAddStudents = true;
+        $this->student = Student::findOrFail($student_id);
+        $this->removeStudent = true;
+    }
+
+    public function closeRemoveStudentModal()
+    {
+        $this->removeStudent = false;
+    }
+
+    public function removeStudent($student_id)
+    {
+        StudentsClass::where("student_student_id", $student_id)->delete();
+        session()->flash(
+            "warning",
+            "Student removed from section successfully"
+        );
+        $this->clear();
+        $this->closeRemoveStudentModal();
     }
 
     public function clear()
