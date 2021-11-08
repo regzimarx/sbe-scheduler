@@ -4,6 +4,8 @@ namespace App\Http\Livewire;
 
 use Livewire\Component;
 use App\Models\Student;
+use App\Models\Section;
+use App\Models\StudentsClass;
 use Livewire\WithPagination;
 
 use Illuminate\Support\Facades\DB;
@@ -13,20 +15,28 @@ class StudentsLivewire extends Component
 {
     use WithPagination;
 
-    public $student_id,
+    public $studentMore,
+        $student_id,
         $first_name,
         $middle_name,
         $last_name,
         $grade_level,
         $department_dept_id,
-        $gpa;
+        $gpa,
+        $section,
+        $section_id;
+
     public $openEdit,
-        $openDelete = false;
+        $openDelete,
+        $openMore,
+        $removeStudent = false;
+
     public $search = "";
     public $orderBy = "student_id";
     public $orderByOrder = "asc";
     public $searchBy = "all";
     public $grade_level_start, $grade_level_end;
+    public $sections_for_grade_level = [];
 
     public function render()
     {
@@ -183,5 +193,54 @@ class StudentsLivewire extends Component
         $this->last_name = null;
         $this->grade_level = null;
         $this->gpa = null;
+    }
+
+    // ============= OPEN MORE ============================
+
+    public function openMoreModal($student_id)
+    {
+        $this->studentMore = Student::findOrFail($student_id);
+        $this->sections_for_grade_level = Section::where(
+            "grade_level",
+            $this->studentMore->grade_level
+        )->get();
+        $this->openMore = true;
+    }
+
+    public function closeMoreModal()
+    {
+        $this->studentMore = null;
+        $this->openMore = false;
+    }
+
+    public function addStudentToSection()
+    {
+        StudentsClass::create([
+            "student_student_id" => $this->studentMore->student_id,
+            "section_section_id" => $this->section_id,
+        ]);
+        session()->flash("message", "Student added to section successfully.");
+    }
+
+    public function removeStudentModal($student_id)
+    {
+        $this->student = Student::findOrFail($student_id);
+        $this->removeStudent = true;
+    }
+
+    public function closeRemoveStudentModal()
+    {
+        $this->removeStudent = false;
+    }
+
+    public function removeStudent($student_id)
+    {
+        StudentsClass::where("student_student_id", $student_id)->delete();
+        session()->flash(
+            "warning",
+            "Student removed from section successfully."
+        );
+        $this->clear();
+        $this->closeRemoveStudentModal();
     }
 }
