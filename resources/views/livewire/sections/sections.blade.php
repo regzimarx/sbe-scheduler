@@ -1,3 +1,5 @@
+@section('title', 'Sections')
+
 <div class="container grid px-6 py-6 mx-auto">
 
     @if (session()->has('message'))
@@ -18,47 +20,19 @@
         </div>
         <br>
     @endif
-
-    <h2 class="text-center my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
-        SECTIONS
+    <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
+        Sections
     </h2>
 
     <!-- With avatar -->
-    <div class="flex justify-between">
-        <!-- <h4 class="mb-4 text-lg font-semibold text-gray-600 dark:text-gray-300">
-            List of subjects
-        </h4> -->
-        <!-- Search input -->
-        <div class="container flex justify-between align-center">
-            <div class="relative flex items-center w-full max-w-xl mr-6 focus-within:text-purple-500">
-                <div class="absolute inset-y-0 flex items-center pl-2">
-                    <svg class="w-4 h-4" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd"
-                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                            clip-rule="evenodd"></path>
-                    </svg>
-                </div>
-                <input wire:model="search"
-                    class="w-full pl-8 pr-2 text-sm text-gray-700 placeholder-gray-600 bg-gray-100 border-0 rounded-md dark:placeholder-gray-500 dark:focus:shadow-outline-gray dark:focus:placeholder-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:placeholder-gray-500 focus:bg-white focus:border-purple-300 focus:outline-none focus:shadow-outline-purple form-input"
-                    type="text" placeholder="Search" aria-label="Search" />
-            </div>
-            <button wire:click.prevent="$toggle('openEdit')"
-                class=" mb-4 px-2 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-full active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                </svg>
-            </button>
-        </div>
-    </div>
+    @include('includes.search', ["fields" => [
+    "section_name" => "Section name",
+    "grade_level" => "Grade level"
+    ]])
 
-    <div class="w-full mb-8 overflow-hidden rounded-lg shadow-xs">
-        @if ($openEdit)
-            @include('livewire.sections.section-edit-modal')
-        @endif
-        @if ($openDelete)
-            @include('livewire.sections.section-delete-modal')
-        @endif
+    <div class="w-full my-5 overflow-hidden rounded-lg shadow-xs">
+        @include('livewire.sections.section-edit-modal')
+        @include('livewire.sections.section-delete-modal')
         @if ($openMakestar)
             @include('livewire.sections.section-makestar-modal')
         @endif
@@ -72,86 +46,28 @@
                         class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
                         <th class="px-4 py-2">
                             <span class="flex flex-row items-center">
-                                Section ID
-                                <span class="bg-blue-500 text-white ml-2 rounded-md px-2 py-1 cursor-pointer"
-                                    wire:click="students_orderby('section_id', 'desc')">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                </span>
-                                <span class="bg-green-500 text-white ml-2 rounded-md px-2 py-1 cursor-pointer"
-                                    wire:click="students_orderby('section_id', 'asc')">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M5 15l7-7 7 7" />
-                                    </svg>
-                                </span>
+                                Record ID
+                                @include('includes.order-by', ["field" => "section_id"])
                             </span>
                         </th>
                         <th class="px-4 py-2">
                             <span class="flex flex-row items-center">
                                 Section name
-                                <span class="bg-blue-500 text-white ml-2 rounded-md px-2 py-1 cursor-pointer"
-                                    wire:click="students_orderby('section_name', 'desc')">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                </span>
-                                <span class="bg-green-500 text-white ml-2 rounded-md px-2 py-1 cursor-pointer"
-                                    wire:click="students_orderby('section_name', 'asc')">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M5 15l7-7 7 7" />
-                                    </svg>
-                                </span>
+                                @include('includes.order-by', ["field" => "section_name"])
                             </span>
                         </th>
-                        <th class="px-4 py-2">
-                            <span class="flex flex-row items-center">
-                                Star section?
-                                <span class="bg-blue-500 text-white ml-2 rounded-md px-2 py-1 cursor-pointer"
-                                    wire:click="students_orderby('is_star', 'desc')">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M19 9l-7 7-7-7" />
-                                    </svg>
+                        @if (Auth::user()->department_dept_id != 1)
+                            <th class="px-4 py-2">
+                                <span class="flex flex-row items-center">
+                                    Star section?
+                                    @include('includes.order-by', ["field" => "is_star"])
                                 </span>
-                                <span class="bg-green-500 text-white ml-2 rounded-md px-2 py-1 cursor-pointer"
-                                    wire:click="students_orderby('is_star', 'asc')">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M5 15l7-7 7 7" />
-                                    </svg>
-                                </span>
-                            </span>
-                        </th>
+                            </th>
+                        @endif
                         <th class="px-4 py-2">
                             <span class="flex flex-row items-center">
                                 Grade level
-                                <span class="bg-blue-500 text-white ml-2 rounded-md px-2 py-1 cursor-pointer"
-                                    wire:click="students_orderby('grade_level', 'desc')">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                </span>
-                                <span class="bg-green-500 text-white ml-2 rounded-md px-2 py-1 cursor-pointer"
-                                    wire:click="students_orderby('grade_level', 'asc')">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M5 15l7-7 7 7" />
-                                    </svg>
-                                </span>
+                                @include('includes.order-by', ["field" => "grade_level"])
                             </span>
                         </th>
                         <th class="px-4 py-2">Actions</th>
@@ -166,12 +82,14 @@
                             <td class="px-4 py-2">
                                 {{ $sec->section_name }}
                             </td>
-                            <td class="px-4 py-2">
-                                @if ($sec->is_star)
-                                    Yes
-                                @else
-                                    No
-                                @endif
+                            @if (Auth::user()->department_dept_id != 1)
+                                <td class="px-4 py-2">
+                                    @if ($sec->is_star)
+                                        Yes
+                                    @else
+                                        No
+                                    @endif
+                            @endif
                             </td>
                             <td class="px-4 py-2">
                                 Grade {{ $sec->grade_level }}
@@ -243,12 +161,11 @@
                                             class="mb-3 text-lg text-center font-semibold text-gray-700 dark:text-gray-300">
                                             Students in this section
                                         </p>
-                                        <div class="grid gap-3 grid-cols-8">
+                                        <div class="grid gap-3 grid-cols-5">
                                             @foreach ($sec->students as $student)
                                                 <div class="p-3 rounded-lg bg-purple-700">
                                                     <p class="text-gray-100 dark:text-gray-100">
-                                                        {{ $student->last_name }},<br>{{ $student->first_name }}<br>
-                                                        {{ $student->middle_name }}
+                                                        {{ $student->last_name . ', ' . $student->first_name . ' ' . $student->middle_name }}
                                                     </p>
                                                     <button
                                                         wire:click.prevent="removeStudentModal({{ $student->student_id }})"

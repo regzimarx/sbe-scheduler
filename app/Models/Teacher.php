@@ -20,4 +20,13 @@ class Teacher extends Model
         "last_name",
         "department_dept_id",
     ];
+
+    public function getFullNameAttribute()
+    {
+        return $this->last_name .
+            ", " .
+            $this->first_name .
+            " " .
+            $this->middle_name;
+    }
 }

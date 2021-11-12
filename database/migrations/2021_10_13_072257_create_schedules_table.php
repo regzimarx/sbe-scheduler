@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Schema;
 use App\Models\Section;
 use App\Models\Subject;
 use App\Models\Teacher;
+use App\Models\Room;
 
 class CreateSchedulesTable extends Migration
 {
@@ -21,6 +22,10 @@ class CreateSchedulesTable extends Migration
             $table->foreignIdFor(Section::class);
             $table->foreignIdFor(Subject::class);
             $table->foreignIdFor(Teacher::class);
+            $table->foreignIdFor(Room::class);
+            $table->time("time_start", $precision = 0);
+            $table->time("time_end", $precision = 0);
+            $table->string("day");
         });
     }
 

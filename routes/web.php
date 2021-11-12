@@ -1,10 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
+use App\Http\Livewire\RoomsLivewire;
 use App\Http\Livewire\SubjectsLivewire;
 use App\Http\Livewire\SectionsLivewire;
 use App\Http\Livewire\StudentsLivewire;
 use App\Http\Livewire\TeachersLivewire;
+use App\Http\Livewire\SchedulesLivewire;
+use App\Http\Livewire\DashboardLivewire;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -20,13 +25,19 @@ Route::get("/", function () {
     return view("auth.login");
 })->middleware(["auth:sanctum", "verified"]);
 
+Route::get("/", function () {
+    return redirect()->route("dashboard");
+});
+
 Route::group(
     ["prefix" => "dashboard", "middleware" => ["auth:sanctum", "verified"]],
     function () {
-        Route::view("", "dashboard")->name("dashboard");
+        Route::get("", DashboardLivewire::class)->name("dashboard");
+        Route::get("/rooms", RoomsLivewire::class)->name("rooms");
         Route::get("/sections", SectionsLivewire::class)->name("sections");
         Route::get("/students", StudentsLivewire::class)->name("students");
         Route::get("/subjects", SubjectsLivewire::class)->name("subjects");
         Route::get("/teachers", TeachersLivewire::class)->name("teachers");
+        Route::get("/schedules", SchedulesLivewire::class)->name("schedules");
     }
 );

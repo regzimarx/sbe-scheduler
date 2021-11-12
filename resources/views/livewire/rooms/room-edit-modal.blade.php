@@ -3,32 +3,21 @@
     <!-- Modal -->
     <div class="w-full px-6 py-4 overflow-hidden bg-white rounded-t-lg dark:bg-gray-800 sm:rounded-lg sm:m-4 sm:max-w-xl transition ease-in-out duration-500 @if ($openEdit) opacity-100 transform translate-y-0 @else opacity-100 transform translate-y-1/2 @endif"
         role="dialog" id="modal">
+
         <form>
             <div class="mt-4 mb-6">
                 <!-- Modal title -->
                 <p class="mb-2 text-lg font-semibold text-gray-700 dark:text-gray-300">
-                    {{ $section_id ? 'Edit section ' : 'Add new section' }}
+                    {{ $room_id ? 'Edit room ' . $room_name : 'Add new room' }}
                 </p>
                 <!-- Modal description -->
 
                 <label class="block text-sm mt-4">
                     <input
                         class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                        placeholder="Enter section name" type="text" wire:model="section_name" id="section_name" />
+                        placeholder="Enter room name" type="text" wire:model="room_name" id="room_name" />
                 </label>
-                <select
-                    class="block w-full mt-4 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
-                    wire:model="grade_level" id="grade_level" wire:model="grade_level">
-                    <option value="">Please select grade level</option>
-                    @for ($i = $grade_level_start; $i <= $grade_level_end; $i++)
-                        <option value="{{ $i }}" @if ($grade_level == $i)
-                            selected
-                    @endif
-                    >
-                    Grade {{ $i }}
-                    </option>
-                    @endfor
-                </select>
+
             </div>
             <footer
                 class="flex flex-col items-center justify-end px-6 py-3 -mx-6 -mb-4 space-y-4 sm:space-y-0 sm:space-x-6 sm:flex-row bg-gray-50 dark:bg-gray-800">

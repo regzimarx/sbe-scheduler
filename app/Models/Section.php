@@ -28,6 +28,6 @@ class Section extends Model
             "students_classes",
             "section_section_id",
             "student_student_id"
-        );
+        )->orderBy("students.last_name", "asc");
     }
 }

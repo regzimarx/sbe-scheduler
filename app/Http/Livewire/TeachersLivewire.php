@@ -12,7 +12,11 @@ class TeachersLivewire extends Component
 {
     use WithPagination;
 
-    public $teacher_id, $first_name, $middle_name, $last_name;
+    public $teacher_id,
+        $first_name,
+        $middle_name,
+        $last_name,
+        $department_dept_id;
     public $openEdit,
         $openDelete = false;
     public $search = "";
@@ -57,7 +61,7 @@ class TeachersLivewire extends Component
         return view("livewire.teachers.teachers", ["teachers" => $teachers]);
     }
 
-    public function students_orderby($orderBy, $orderByOrder)
+    public function orderby($orderBy, $orderByOrder)
     {
         $this->orderBy = $orderBy;
         $this->orderByOrder = $orderByOrder;
@@ -79,6 +83,7 @@ class TeachersLivewire extends Component
                 "first_name" => $this->first_name,
                 "middle_name" => $this->middle_name,
                 "last_name" => $this->last_name,
+                "department_dept_id" => Auth::user()->department_dept_id,
             ]
         );
 
