@@ -1,21 +1,21 @@
-@section('title', 'Subjects')
+@section('title', 'Rooms')
 
 <div class="container grid px-6 py-6 mx-auto">
 
     @include('includes.messages')
 
     <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
-        Subjects
+        Rooms
     </h2>
 
     <!-- With avatar -->
     @include('includes.search', ["fields" => [
-    "subject_name" => "Subject name"
+    "room_name" => "Room name"
     ]])
 
     <div class="w-full my-5 overflow-hidden rounded-lg shadow-xs">
-        @include('livewire.subjects.subject-edit-modal')
-        @include('livewire.subjects.subject-delete-modal')
+        @include('livewire.rooms.room-edit-modal')
+        @include('livewire.rooms.room-delete-modal')
         <div class="w-full overflow-x-auto">
             <table class="table-auto w-full">
                 <thead>
@@ -24,29 +24,29 @@
                         <th class="px-4 py-2">
                             <span class="flex flex-row items-center">
                                 Record ID
-                                @include('includes.order-by', ["field" => 'subject_id'])
+                                @include('includes.order-by', ["field" => 'room_id'])
                             </span>
                         </th>
                         <th class="px-4 py-2">
                             <span class="flex flex-row items-center">
-                                Subject name
-                                @include('includes.order-by', ["field" => 'subject_name'])
+                                Room name
+                                @include('includes.order-by', ["field" => 'room_name'])
                             </span>
                         </th>
                         <th class="px-4 py-2">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
-                    @foreach ($subjects as $subject)
+                    @foreach ($rooms as $room)
                         <tr class="text-gray-700 dark:text-gray-400">
                             <td class="px-4 py-2 text-sm">
-                                {{ $subject->subject_id }}
+                                {{ $room->room_id }}
                             </td>
                             <td class="px-4 py-2">
-                                {{ $subject->subject_name }}
+                                {{ $room->room_name }}
                             </td>
                             <td class="px-4 py-2">
-                                <button wire:click.prevent="edit({{ $subject->subject_id }})"
+                                <button wire:click.prevent="edit({{ $room->room_id }})"
                                     class="mt-4 mb-4 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-yellow-400 border border-transparent rounded-md active:bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:shadow-outline-purple">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
@@ -54,7 +54,7 @@
                                             d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                     </svg>
                                 </button>
-                                <button wire:click.prevent="openDelete({{ $subject->subject_id }})"
+                                <button wire:click.prevent="openDelete({{ $room->room_id }})"
                                     class="mt-4 mb-4 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-red-400 border border-transparent rounded-md active:bg-red-600 hover:bg-red-700 focus:outline-none focus:shadow-outline-purple">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
@@ -69,5 +69,5 @@
             </table>
         </div>
     </div>
-    {{ $subjects->links() }}
+    {{ $rooms->links() }}
 </div>

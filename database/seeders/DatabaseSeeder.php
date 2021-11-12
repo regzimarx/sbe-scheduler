@@ -2,16 +2,17 @@
 
 namespace Database\Seeders;
 
+use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
+use App\Models\Room;
+use App\Models\User;
 use App\Models\Subject;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\Section;
-use App\Models\User;
 use App\Models\Department;
 
 class DatabaseSeeder extends Seeder
@@ -38,12 +39,12 @@ class DatabaseSeeder extends Seeder
 
         DB::table("users")->insert([
             "first_name" => "SBE",
-            "middle_name" => "Super",
             "last_name" => "Admin",
+            "middle_name" => "Super",
+            "department_dept_id" => null,
+            "admin_type" => "superadmin",
             "email" => "superadmin@gmail.com",
             "password" => Hash::make("superadmin123"),
-            "admin_type" => "superadmin",
-            "department_dept_id" => null,
         ]);
 
         // Add teams as required by Larawind but will not be used
@@ -68,12 +69,12 @@ class DatabaseSeeder extends Seeder
         foreach ($depts as $dept) {
             DB::table("users")->insert([
                 "first_name" => Str::random(10),
-                "middle_name" => Str::random(10),
+                "admin_type" => "admin",
                 "last_name" => Str::random(10),
+                "middle_name" => Str::random(10),
+                "department_dept_id" => $dept->dept_id,
                 "email" => $dept->dept_name . "@gmail.com",
                 "password" => Hash::make($dept->dept_name . "123"),
-                "admin_type" => "admin",
-                "department_dept_id" => $dept->dept_id,
             ]);
         }
 
@@ -98,9 +99,10 @@ class DatabaseSeeder extends Seeder
         }
 
         // Seed other DBs
-        Subject::factory(50)->create();
-        Student::factory(50)->create();
-        Teacher::factory(50)->create();
-        Section::factory(50)->create();
+        // Room::factory(50)->create();
+        // Section::factory(50)->create();
+        // Subject::factory(50)->create();
+        // Teacher::factory(50)->create();
+        // Student::factory(500)->create();
     }
 }

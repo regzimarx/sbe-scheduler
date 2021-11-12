@@ -62,7 +62,7 @@ class StudentsLivewire extends Component
                         "department_dept_id",
                         Auth::user()->department_dept_id
                     )
-                    ->paginate(20);
+                    ->paginate(10);
         } else {
             $students = Student::where(
                 $this->searchBy,
@@ -71,7 +71,7 @@ class StudentsLivewire extends Component
             )
                 ->where("department_dept_id", Auth::user()->department_dept_id)
                 ->orderBy($this->orderBy, $this->orderByOrder)
-                ->paginate(20);
+                ->paginate(10);
         }
 
         // Set grade levels based on department
@@ -95,7 +95,7 @@ class StudentsLivewire extends Component
         return view("livewire.students.students", ["students" => $students]);
     }
 
-    public function students_orderby($orderBy, $orderByOrder)
+    public function orderby($orderBy, $orderByOrder)
     {
         $this->orderBy = $orderBy;
         $this->orderByOrder = $orderByOrder;
@@ -121,6 +121,7 @@ class StudentsLivewire extends Component
                 "last_name" => $this->last_name,
                 "grade_level" => $this->grade_level,
                 "gpa" => $this->gpa,
+                "department_dept_id" => Auth::user()->department_dept_id,
             ]
         );
 

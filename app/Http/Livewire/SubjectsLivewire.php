@@ -12,31 +12,56 @@ class SubjectsLivewire extends Component
 {
     use WithPagination;
 
-    public $subject_id, $subject_name, $department;
+    public $subject_id, $subject_name, $department, $searchBy;
     public $openEdit,
         $openDelete = false;
     public $search = "";
     public $orderBy = "subject_id";
     public $orderByOrder = "asc";
 
+    protected $perPage = 10;
+
+    public function mount()
+    {
+        $this->searchBy = "all";
+    }
+
     public function render()
     {
-        $subjects = $this->search
-            ? Subject::where("subject_name", "like", "%" . $this->search . "%")
+        if ($this->searchBy == "all") {
+            $subjects = $this->search
+                ? Subject::where(
+                    "subject_name",
+                    "like",
+                    "%" . $this->search . "%"
+                )
+                    ->where(
+                        "department_dept_id",
+                        Auth::user()->department_dept_id
+                    )
+                    ->orderBy($this->orderBy, $this->orderByOrder)
+                    ->paginate(10)
+                : Subject::where(
+                    "department_dept_id",
+                    Auth::user()->department_dept_id
+                )
+                    ->orderBy($this->orderBy, $this->orderByOrder)
+                    ->paginate(10);
+        } else {
+            $subjects = Subject::where(
+                $this->searchBy,
+                "like",
+                "%" . $this->search . "%"
+            )
                 ->where("department_dept_id", Auth::user()->department_dept_id)
                 ->orderBy($this->orderBy, $this->orderByOrder)
-                ->paginate(20)
-            : Subject::where(
-                "department_dept_id",
-                Auth::user()->department_dept_id
-            )
-                ->orderBy($this->orderBy, $this->orderByOrder)
-                ->paginate(20);
+                ->paginate(10);
+        }
 
         return view("livewire.subjects.subjects", ["subjects" => $subjects]);
     }
 
-    public function students_orderby($orderBy, $orderByOrder)
+    public function orderby($orderBy, $orderByOrder)
     {
         $this->orderBy = $orderBy;
         $this->orderByOrder = $orderByOrder;
@@ -52,7 +77,10 @@ class SubjectsLivewire extends Component
 
         Subject::updateOrCreate(
             ["subject_id" => $this->subject_id],
-            ["subject_name" => $this->subject_name]
+            [
+                "subject_name" => $this->subject_name,
+                "department_dept_id" => Auth::user()->department_dept_id,
+            ]
         );
 
         session()->flash(
