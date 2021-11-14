@@ -1,5 +1,4 @@
-<div wire:model="openEdit"
-    class="fixed inset-0 flex items-end bg-black bg-opacity-50 sm:items-center sm:justify-center transition ease-in-out duration-500 @if ($openEdit) opacity-100 @else opacity-0 @endif"
+<div class="fixed inset-0 flex items-end bg-black bg-opacity-50 sm:items-center sm:justify-center transition ease-in-out duration-500 @if ($openEdit) opacity-100 @else opacity-0 @endif"
     style="z-index: @if (!$openEdit) -999 @else 30 @endif ;">
     <!-- Modal -->
     <div class="w-full px-6 py-4 overflow-hidden bg-white rounded-t-lg dark:bg-gray-800 sm:rounded-lg sm:m-4 sm:max-w-xl transition ease-in-out duration-500 @if ($openEdit) opacity-100 transform translate-y-0 @else opacity-100 transform translate-y-1/2 @endif"
@@ -8,7 +7,7 @@
             <div class="mt-4 mb-6">
                 <!-- Modal title -->
                 <p class="mb-2 text-lg font-semibold text-gray-700 dark:text-gray-300">
-                    {{ $subject_id ? 'Edit subject ' . $subject_name : 'Add new subject' }}
+                    {{ $subject_id ? 'Edit subject ' : 'Add new subject' }}
                 </p>
                 <!-- Modal description -->
 
@@ -17,6 +16,9 @@
                         class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                         placeholder="Enter subject name" type="text" wire:model="subject_name" id="subject_name" />
                 </label>
+                @if (Auth::user()->department_dept_id == null)
+                    @include('includes.department_select', ['dept_id' => $department_dept_id])
+                @endif
 
             </div>
             <footer

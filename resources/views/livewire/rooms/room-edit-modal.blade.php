@@ -8,7 +8,7 @@
             <div class="mt-4 mb-6">
                 <!-- Modal title -->
                 <p class="mb-2 text-lg font-semibold text-gray-700 dark:text-gray-300">
-                    {{ $room_id ? 'Edit room ' . $room_name : 'Add new room' }}
+                    {{ $room_id ? 'Edit room ' : 'Add new room' }}
                 </p>
                 <!-- Modal description -->
 
@@ -17,6 +17,10 @@
                         class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                         placeholder="Enter room name" type="text" wire:model="room_name" id="room_name" />
                 </label>
+
+                @if (Auth::user()->department_dept_id == null)
+                    @include('includes.department_select', ['dept_id' => $department_dept_id])
+                @endif
 
             </div>
             <footer

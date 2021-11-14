@@ -12,7 +12,7 @@ class SubjectsLivewire extends Component
 {
     use WithPagination;
 
-    public $subject_id, $subject_name, $department, $searchBy;
+    public $subject_id, $subject_name, $department_dept_id, $searchBy;
     public $openEdit,
         $openDelete = false;
     public $search = "";
@@ -28,10 +28,52 @@ class SubjectsLivewire extends Component
 
     public function render()
     {
-        if ($this->searchBy == "all") {
-            $subjects = $this->search
-                ? Subject::where(
-                    "subject_name",
+        if (Auth::user()->department_dept_id == null) {
+            if ($this->searchBy == "all") {
+                $subjects = $this->search
+                    ? Subject::where(
+                        "subject_name",
+                        "like",
+                        "%" . $this->search . "%"
+                    )
+                    ->orderBy($this->orderBy, $this->orderByOrder)
+                    ->paginate(10)
+                    : Subject::orderBy(
+                        $this->orderBy,
+                        $this->orderByOrder
+                    )->paginate(10);
+            } else {
+                $subjects = Subject::where(
+                    $this->searchBy,
+                    "like",
+                    "%" . $this->search . "%"
+                )
+                    ->orderBy($this->orderBy, $this->orderByOrder)
+                    ->paginate(10);
+            }
+        } else {
+            if ($this->searchBy == "all") {
+                $subjects = $this->search
+                    ? Subject::where(
+                        "subject_name",
+                        "like",
+                        "%" . $this->search . "%"
+                    )
+                    ->where(
+                        "department_dept_id",
+                        Auth::user()->department_dept_id
+                    )
+                    ->orderBy($this->orderBy, $this->orderByOrder)
+                    ->paginate(10)
+                    : Subject::where(
+                        "department_dept_id",
+                        Auth::user()->department_dept_id
+                    )
+                    ->orderBy($this->orderBy, $this->orderByOrder)
+                    ->paginate(10);
+            } else {
+                $subjects = Subject::where(
+                    $this->searchBy,
                     "like",
                     "%" . $this->search . "%"
                 )
@@ -40,22 +82,8 @@ class SubjectsLivewire extends Component
                         Auth::user()->department_dept_id
                     )
                     ->orderBy($this->orderBy, $this->orderByOrder)
-                    ->paginate(10)
-                : Subject::where(
-                    "department_dept_id",
-                    Auth::user()->department_dept_id
-                )
-                    ->orderBy($this->orderBy, $this->orderByOrder)
                     ->paginate(10);
-        } else {
-            $subjects = Subject::where(
-                $this->searchBy,
-                "like",
-                "%" . $this->search . "%"
-            )
-                ->where("department_dept_id", Auth::user()->department_dept_id)
-                ->orderBy($this->orderBy, $this->orderByOrder)
-                ->paginate(10);
+            }
         }
 
         return view("livewire.subjects.subjects", ["subjects" => $subjects]);
@@ -71,15 +99,25 @@ class SubjectsLivewire extends Component
 
     public function store()
     {
-        $this->validate([
-            "subject_name" => "required",
-        ]);
+
+        $dept = Auth::user()->department_dept_id == null ?  $this->department_dept_id :  Auth::user()->department_dept_id;
+
+        if (Auth::user()->department_dept_id == null) {
+            $this->validate([
+                "subject_name" => "required",
+                "department_dept_id" => 'required',
+            ]);
+        } else {
+            $this->validate([
+                "subject_name" => "required",
+            ]);
+        }
 
         Subject::updateOrCreate(
             ["subject_id" => $this->subject_id],
             [
                 "subject_name" => $this->subject_name,
-                "department_dept_id" => Auth::user()->department_dept_id,
+                "department_dept_id" => $dept
             ]
         );
 
@@ -100,6 +138,7 @@ class SubjectsLivewire extends Component
         $subject = Subject::findOrFail($subject_id);
         $this->subject_id = $subject->subject_id;
         $this->subject_name = $subject->subject_name;
+        $this->department_dept_id = $subject->department_dept_id;
         $this->openEdit = true;
     }
 

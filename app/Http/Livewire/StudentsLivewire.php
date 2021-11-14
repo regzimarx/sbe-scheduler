@@ -40,10 +40,41 @@ class StudentsLivewire extends Component
 
     public function render()
     {
-        if ($this->searchBy == "all") {
-            $students = $this->search
-                ? Student::where(
-                    "first_name",
+        if (Auth::user()->department_dept_id != null) {
+            if ($this->searchBy == "all") {
+                $students = $this->search
+                    ? Student::where(
+                        "first_name",
+                        "like",
+                        "%" . $this->search . "%"
+                    )
+                        ->where(
+                            "department_dept_id",
+                            Auth::user()->department_dept_id
+                        )
+                        ->orWhere(
+                            "middle_name",
+                            "like",
+                            "%" . $this->search . "%"
+                        )
+                        ->orWhere(
+                            "last_name",
+                            "like",
+                            "%" . $this->search . "%"
+                        )
+                        ->orWhere("grade_level", intval($this->search))
+                        ->orWhere("gpa", "like", "%" . $this->search . "%")
+                        ->orderBy($this->orderBy, $this->orderByOrder)
+                        ->paginate(20)
+                    : Student::orderBy($this->orderBy, $this->orderByOrder)
+                        ->where(
+                            "department_dept_id",
+                            Auth::user()->department_dept_id
+                        )
+                        ->paginate(10);
+            } else {
+                $students = Student::where(
+                    $this->searchBy,
                     "like",
                     "%" . $this->search . "%"
                 )
@@ -51,27 +82,44 @@ class StudentsLivewire extends Component
                         "department_dept_id",
                         Auth::user()->department_dept_id
                     )
-                    ->orWhere("middle_name", "like", "%" . $this->search . "%")
-                    ->orWhere("last_name", "like", "%" . $this->search . "%")
-                    ->orWhere("grade_level", intval($this->search))
-                    ->orWhere("gpa", "like", "%" . $this->search . "%")
                     ->orderBy($this->orderBy, $this->orderByOrder)
-                    ->paginate(20)
-                : Student::orderBy($this->orderBy, $this->orderByOrder)
-                    ->where(
-                        "department_dept_id",
-                        Auth::user()->department_dept_id
-                    )
                     ->paginate(10);
+            }
         } else {
-            $students = Student::where(
-                $this->searchBy,
-                "like",
-                "%" . $this->search . "%"
-            )
-                ->where("department_dept_id", Auth::user()->department_dept_id)
-                ->orderBy($this->orderBy, $this->orderByOrder)
-                ->paginate(10);
+            if ($this->searchBy == "all") {
+                $students = $this->search
+                    ? Student::where(
+                        "first_name",
+                        "like",
+                        "%" . $this->search . "%"
+                    )
+                        ->orWhere(
+                            "middle_name",
+                            "like",
+                            "%" . $this->search . "%"
+                        )
+                        ->orWhere(
+                            "last_name",
+                            "like",
+                            "%" . $this->search . "%"
+                        )
+                        ->orWhere("grade_level", intval($this->search))
+                        ->orWhere("gpa", "like", "%" . $this->search . "%")
+                        ->orderBy($this->orderBy, $this->orderByOrder)
+                        ->paginate(20)
+                    : Student::orderBy(
+                        $this->orderBy,
+                        $this->orderByOrder
+                    )->paginate(10);
+            } else {
+                $students = Student::where(
+                    $this->searchBy,
+                    "like",
+                    "%" . $this->search . "%"
+                )
+                    ->orderBy($this->orderBy, $this->orderByOrder)
+                    ->paginate(10);
+            }
         }
 
         // Set grade levels based on department
@@ -121,7 +169,7 @@ class StudentsLivewire extends Component
                 "last_name" => $this->last_name,
                 "grade_level" => $this->grade_level,
                 "gpa" => $this->gpa,
-                "department_dept_id" => Auth::user()->department_dept_id,
+                "department_dept_id" => $this->setDepartment(),
             ]
         );
 
@@ -133,8 +181,22 @@ class StudentsLivewire extends Component
         );
 
         $this->clear();
-
         $this->openEdit = false;
+    }
+
+    private function setDepartment()
+    {
+        if (Auth::user()->department_dept_id != null) {
+            return Auth::user()->department_dept_id;
+        } else {
+            if (in_array($this->grade_level, [1, 2, 3, 4, 5, 6])) {
+                return 1;
+            } elseif (in_array($this->grade_level, [7, 8, 9, 10])) {
+                return 2;
+            } elseif (in_array($this->grade_level, [11, 12])) {
+                return 3;
+            }
+        }
     }
 
     public function edit($student_id)
@@ -146,6 +208,7 @@ class StudentsLivewire extends Component
         $this->last_name = $student->last_name;
         $this->grade_level = $student->grade_level;
         $this->gpa = $student->gpa;
+        $this->department_dept_id = $student->department_dept_id;
         $this->openEdit = true;
     }
 

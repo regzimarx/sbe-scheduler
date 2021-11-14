@@ -18,7 +18,7 @@ class CreateRoomsTable extends Migration
         Schema::create("rooms", function (Blueprint $table) {
             $table->increments("room_id");
             $table->string("room_name");
-            $table->foreignIdFor(Department::class);
+            $table->foreignIdFor(Department::class)->nullable();
         });
     }
 
