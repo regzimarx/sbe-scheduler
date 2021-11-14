@@ -46,25 +46,35 @@ class SchedulesLivewire extends Component
     {
         $this->searchBy = "all";
 
-        $this->subjects = Subject::where(
-            "department_dept_id",
-            Auth::user()->department_dept_id
-        )->get();
+        if (Auth::user()->department_dept_id != null) {
+            $this->subjects = Subject::where(
+                "department_dept_id",
+                Auth::user()->department_dept_id
+            )->get();
 
-        $this->teachers = Teacher::where(
-            "department_dept_id",
-            Auth::user()->department_dept_id
-        )->get();
+            $this->teachers = Teacher::where(
+                "department_dept_id",
+                Auth::user()->department_dept_id
+            )->get();
 
-        $this->sections = Section::where(
-            "department_dept_id",
-            Auth::user()->department_dept_id
-        )->get();
+            $this->sections = Section::where(
+                "department_dept_id",
+                Auth::user()->department_dept_id
+            )->get();
 
-        $this->rooms = Room::where(
-            "department_dept_id",
-            Auth::user()->department_dept_id
-        )->get();
+            $this->rooms = Room::where(
+                "department_dept_id",
+                Auth::user()->department_dept_id
+            )->get();
+        } else {
+            $this->subjects = Subject::all();
+
+            $this->teachers = Teacher::all();
+
+            $this->sections = Section::all();
+
+            $this->rooms = Room::all();
+        }
 
         $this->days = [
             "Everyday",
@@ -80,71 +90,96 @@ class SchedulesLivewire extends Component
 
     public function render()
     {
-        if ($this->searchBy == "all") {
-            $schedules = $this->search
-                ? Schedule::where(
-                    "subjects.department_dept_id",
-                    Auth::user()->department_dept_id
-                )
-                    ->orWhere(
+        if (Auth::user()->department_dept_id == null) {
+            if ($this->searchBy == "all") {
+                $schedules = $this->search
+                    ? Schedule::where(
                         "subjects.subject_name",
                         "like",
                         "%" . $this->search . "%"
                     )
-                    ->orWhere(
-                        "sections.section_name",
-                        "like",
-                        "%" . $this->search . "%"
-                    )
-                    ->orWhere(
-                        "teachers.first_name",
-                        "like",
-                        "%" . $this->search . "%"
-                    )
-                    ->orWhere(
-                        "teachers.middle_name",
-                        "like",
-                        "%" . $this->search . "%"
-                    )
-                    ->orWhere(
-                        "teachers.last_name",
-                        "like",
-                        "%" . $this->search . "%"
-                    )
-                    ->orWhere(
-                        "rooms.room_name",
-                        "like",
-                        "%" . $this->search . "%"
-                    )
-                    ->join(
+                        ->orWhere(
+                            "sections.section_name",
+                            "like",
+                            "%" . $this->search . "%"
+                        )
+                        ->orWhere(
+                            "teachers.first_name",
+                            "like",
+                            "%" . $this->search . "%"
+                        )
+                        ->orWhere(
+                            "teachers.middle_name",
+                            "like",
+                            "%" . $this->search . "%"
+                        )
+                        ->orWhere(
+                            "teachers.last_name",
+                            "like",
+                            "%" . $this->search . "%"
+                        )
+                        ->orWhere(
+                            "rooms.room_name",
+                            "like",
+                            "%" . $this->search . "%"
+                        )
+                        ->join(
+                            "subjects",
+                            "schedules.subject_subject_id",
+                            "=",
+                            "subjects.subject_id"
+                        )
+                        ->join(
+                            "sections",
+                            "schedules.section_section_id",
+                            "=",
+                            "sections.section_id"
+                        )
+                        ->join(
+                            "teachers",
+                            "schedules.teacher_teacher_id",
+                            "=",
+                            "teachers.teacher_id"
+                        )
+                        ->join(
+                            "rooms",
+                            "schedules.room_room_id",
+                            "=",
+                            "rooms.room_id"
+                        )
+                        ->orderBy($this->orderBy, $this->orderByOrder)
+                        ->paginate(10)
+                    : Schedule::join(
                         "subjects",
                         "schedules.subject_subject_id",
                         "=",
                         "subjects.subject_id"
                     )
-                    ->join(
-                        "sections",
-                        "schedules.section_section_id",
-                        "=",
-                        "sections.section_id"
-                    )
-                    ->join(
-                        "teachers",
-                        "schedules.teacher_teacher_id",
-                        "=",
-                        "teachers.teacher_id"
-                    )
-                    ->join(
-                        "rooms",
-                        "schedules.room_room_id",
-                        "=",
-                        "rooms.room_id"
-                    )
-                    ->orderBy($this->orderBy, $this->orderByOrder)
-                    ->paginate(10)
-                : Schedule::where(
-                    "subjects.department_dept_id",
-                    Auth::user()->department_dept_id
+                        ->join(
+                            "sections",
+                            "schedules.section_section_id",
+                            "=",
+                            "sections.section_id"
+                        )
+                        ->join(
+                            "teachers",
+                            "schedules.teacher_teacher_id",
+                            "=",
+                            "teachers.teacher_id"
+                        )
+                        ->join(
+                            "rooms",
+                            "schedules.room_room_id",
+                            "=",
+                            "rooms.room_id"
+                        )
+                        ->orderBy($this->orderBy, $this->orderByOrder)
+                        ->paginate(10);
+            } else {
+                $schedules = Schedule::where(
+                    $this->searchBy,
+                    "like",
+                    "%" . $this->search . "%"
                 )
                     ->join(
                         "subjects",
@@ -172,37 +207,137 @@ class SchedulesLivewire extends Component
                     )
                     ->orderBy($this->orderBy, $this->orderByOrder)
                     ->paginate(10);
+            }
         } else {
-            $schedules = Schedule::where(
-                $this->searchBy,
-                "like",
-                "%" . $this->search . "%"
-            )
-                ->where(
-                    "subjects.department_dept_id",
-                    Auth::user()->department_dept_id
+            if ($this->searchBy == "all") {
+                $schedules = $this->search
+                    ? Schedule::where(
+                        "subjects.department_dept_id",
+                        Auth::user()->department_dept_id
+                    )
+                        ->orWhere(
+                            "subjects.subject_name",
+                            "like",
+                            "%" . $this->search . "%"
+                        )
+                        ->orWhere(
+                            "sections.section_name",
+                            "like",
+                            "%" . $this->search . "%"
+                        )
+                        ->orWhere(
+                            "teachers.first_name",
+                            "like",
+                            "%" . $this->search . "%"
+                        )
+                        ->orWhere(
+                            "teachers.middle_name",
+                            "like",
+                            "%" . $this->search . "%"
+                        )
+                        ->orWhere(
+                            "teachers.last_name",
+                            "like",
+                            "%" . $this->search . "%"
+                        )
+                        ->orWhere(
+                            "rooms.room_name",
+                            "like",
+                            "%" . $this->search . "%"
+                        )
+                        ->join(
+                            "subjects",
+                            "schedules.subject_subject_id",
+                            "=",
+                            "subjects.subject_id"
+                        )
+                        ->join(
+                            "sections",
+                            "schedules.section_section_id",
+                            "=",
+                            "sections.section_id"
+                        )
+                        ->join(
+                            "teachers",
+                            "schedules.teacher_teacher_id",
+                            "=",
+                            "teachers.teacher_id"
+                        )
+                        ->join(
+                            "rooms",
+                            "schedules.room_room_id",
+                            "=",
+                            "rooms.room_id"
+                        )
+                        ->orderBy($this->orderBy, $this->orderByOrder)
+                        ->paginate(10)
+                    : Schedule::where(
+                        "subjects.department_dept_id",
+                        Auth::user()->department_dept_id
+                    )
+                        ->join(
+                            "subjects",
+                            "schedules.subject_subject_id",
+                            "=",
+                            "subjects.subject_id"
+                        )
+                        ->join(
+                            "sections",
+                            "schedules.section_section_id",
+                            "=",
+                            "sections.section_id"
+                        )
+                        ->join(
+                            "teachers",
+                            "schedules.teacher_teacher_id",
+                            "=",
+                            "teachers.teacher_id"
+                        )
+                        ->join(
+                            "rooms",
+                            "schedules.room_room_id",
+                            "=",
+                            "rooms.room_id"
+                        )
+                        ->orderBy($this->orderBy, $this->orderByOrder)
+                        ->paginate(10);
+            } else {
+                $schedules = Schedule::where(
+                    $this->searchBy,
+                    "like",
+                    "%" . $this->search . "%"
                 )
-                ->join(
-                    "subjects",
-                    "schedules.subject_subject_id",
-                    "=",
-                    "subjects.subject_id"
-                )
-                ->join(
-                    "sections",
-                    "schedules.section_section_id",
-                    "=",
-                    "sections.section_id"
-                )
-                ->join(
-                    "teachers",
-                    "schedules.teacher_teacher_id",
-                    "=",
-                    "teachers.teacher_id"
-                )
-                ->join("rooms", "schedules.room_room_id", "=", "rooms.room_id")
-                ->orderBy($this->orderBy, $this->orderByOrder)
-                ->paginate(10);
+                    ->where(
+                        "subjects.department_dept_id",
+                        Auth::user()->department_dept_id
+                    )
+                    ->join(
+                        "subjects",
+                        "schedules.subject_subject_id",
+                        "=",
+                        "subjects.subject_id"
+                    )
+                    ->join(
+                        "sections",
+                        "schedules.section_section_id",
+                        "=",
+                        "sections.section_id"
+                    )
+                    ->join(
+                        "teachers",
+                        "schedules.teacher_teacher_id",
+                        "=",
+                        "teachers.teacher_id"
+                    )
+                    ->join(
+                        "rooms",
+                        "schedules.room_room_id",
+                        "=",
+                        "rooms.room_id"
+                    )
+                    ->orderBy($this->orderBy, $this->orderByOrder)
+                    ->paginate(10);
+            }
         }
 
         return view("livewire.schedules.schedules", [

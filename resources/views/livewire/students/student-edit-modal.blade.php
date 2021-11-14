@@ -1,5 +1,4 @@
-<div wire:model="openDelete"
-    class="fixed inset-0 flex items-end bg-black bg-opacity-50 sm:items-center sm:justify-center transition ease-in-out duration-500 @if ($openEdit) opacity-100 @else opacity-0 @endif"
+<div class="fixed inset-0 flex items-end bg-black bg-opacity-50 sm:items-center sm:justify-center transition ease-in-out duration-500 @if ($openEdit) opacity-100 @else opacity-0 @endif"
     style="z-index: @if (!$openEdit) -999 @else 30 @endif ;">
     <!-- Modal -->
     <div class="w-full px-6 py-4 overflow-hidden bg-white rounded-t-lg dark:bg-gray-800 sm:rounded-lg sm:m-4 sm:max-w-xl transition ease-in-out duration-500 @if ($openEdit) opacity-100 transform translate-y-0 @else opacity-100 transform translate-y-1/2 @endif"
@@ -8,7 +7,7 @@
             <div class="mt-4 mb-6">
                 <!-- Modal title -->
                 <p class="mb-2 text-lg font-semibold text-gray-700 dark:text-gray-300">
-                    {{ $student_id ? 'Edit student ' . $first_name . ' ' . $middle_name . ' ' . $last_name : 'Add new student record' }}
+                    {{ $student_id ? 'Edit student ' : 'Add new student record' }}
                 </p>
                 <!-- Modal description -->
 

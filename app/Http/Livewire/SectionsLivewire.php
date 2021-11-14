@@ -59,10 +59,29 @@ class SectionsLivewire extends Component
 
     public function render()
     {
-        if ($this->searchBy == "all") {
-            $sections = $this->search
-                ? Section::where(
-                    "section_name",
+        if (Auth::user()->department_dept_id != null) {
+            if ($this->searchBy == "all") {
+                $sections = $this->search
+                    ? Section::where(
+                        "section_name",
+                        "like",
+                        "%" . $this->search . "%"
+                    )
+                        ->where(
+                            "department_dept_id",
+                            Auth::user()->department_dept_id
+                        )
+                        ->orderBy($this->orderBy, $this->orderByOrder)
+                        ->paginate(10)
+                    : Section::where(
+                        "department_dept_id",
+                        Auth::user()->department_dept_id
+                    )
+                        ->orderBy($this->orderBy, $this->orderByOrder)
+                        ->paginate(10);
+            } else {
+                $sections = Section::where(
+                    $this->searchBy,
                     "like",
                     "%" . $this->search . "%"
                 )
@@ -71,22 +90,31 @@ class SectionsLivewire extends Component
                         Auth::user()->department_dept_id
                     )
                     ->orderBy($this->orderBy, $this->orderByOrder)
-                    ->paginate(10)
-                : Section::where(
-                    "department_dept_id",
-                    Auth::user()->department_dept_id
+                    ->paginate(10);
+            }
+        } else {
+            if ($this->searchBy == "all") {
+                $sections = $this->search
+                    ? Section::where(
+                        "section_name",
+                        "like",
+                        "%" . $this->search . "%"
+                    )
+                        ->orderBy($this->orderBy, $this->orderByOrder)
+                        ->paginate(10)
+                    : Section::orderBy(
+                        $this->orderBy,
+                        $this->orderByOrder
+                    )->paginate(10);
+            } else {
+                $sections = Section::where(
+                    $this->searchBy,
+                    "like",
+                    "%" . $this->search . "%"
                 )
                     ->orderBy($this->orderBy, $this->orderByOrder)
                     ->paginate(10);
-        } else {
-            $sections = Section::where(
-                $this->searchBy,
-                "like",
-                "%" . $this->search . "%"
-            )
-                ->where("department_dept_id", Auth::user()->department_dept_id)
-                ->orderBy($this->orderBy, $this->orderByOrder)
-                ->paginate(10);
+            }
         }
 
         return view("livewire.sections.sections", ["sections" => $sections]);
@@ -120,7 +148,7 @@ class SectionsLivewire extends Component
                     "section_name" => $this->section_name,
                     "grade_level" => $this->grade_level,
                     "is_star" => $this->is_star,
-                    "department_dept_id" => $this->department_dept_id,
+                    "department_dept_id" => $this->setDepartment(),
                 ]);
             })
                 ? session()->flash(
@@ -135,7 +163,7 @@ class SectionsLivewire extends Component
                     "section_name" => $this->section_name,
                     "is_star" => false,
                     "grade_level" => $this->grade_level,
-                    "department_dept_id" => Auth::user()->department_dept_id,
+                    "department_dept_id" => $this->setDepartment(),
                 ]
             );
 
@@ -146,6 +174,21 @@ class SectionsLivewire extends Component
 
         $this->clear();
         $this->openEdit = false;
+    }
+
+    private function setDepartment()
+    {
+        if (Auth::user()->department_dept_id != null) {
+            return Auth::user()->department_dept_id;
+        } else {
+            if (in_array($this->grade_level, [1, 2, 3, 4, 5, 6])) {
+                return 1;
+            } elseif (in_array($this->grade_level, [7, 8, 9, 10])) {
+                return 2;
+            } elseif (in_array($this->grade_level, [11, 12])) {
+                return 3;
+            }
+        }
     }
 
     public function edit($section_id)

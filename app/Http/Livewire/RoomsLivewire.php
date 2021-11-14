@@ -12,7 +12,7 @@ class RoomsLivewire extends Component
 {
     use WithPagination;
 
-    public $room_id, $room_name, $department, $searchBy;
+    public $room_id, $room_name, $department_dept_id, $searchBy;
     public $openEdit,
         $openDelete = false;
     public $search = "";
@@ -26,17 +26,30 @@ class RoomsLivewire extends Component
 
     public function render()
     {
-        $rooms = $this->search
-            ? Room::where("room_name", "like", "%" . $this->search . "%")
-                ->where("department_dept_id", Auth::user()->department_dept_id)
-                ->orderBy($this->orderBy, $this->orderByOrder)
-                ->paginate(10)
-            : Room::where(
-                "department_dept_id",
-                Auth::user()->department_dept_id
-            )
-                ->orderBy($this->orderBy, $this->orderByOrder)
-                ->paginate(10);
+        if (Auth::user()->department_dept_id != null) {
+            $rooms = $this->search
+                ? Room::where("room_name", "like", "%" . $this->search . "%")
+                    ->where(
+                        "department_dept_id",
+                        Auth::user()->department_dept_id
+                    )
+                    ->orderBy($this->orderBy, $this->orderByOrder)
+                    ->paginate(10)
+                : Room::where(
+                    "department_dept_id",
+                    Auth::user()->department_dept_id
+                )
+                    ->orderBy($this->orderBy, $this->orderByOrder)
+                    ->paginate(10);
+        } else {
+            $rooms = $this->search
+                ? Room::where("room_name", "like", "%" . $this->search . "%")
+                    ->orderBy($this->orderBy, $this->orderByOrder)
+                    ->paginate(10)
+                : Room::orderBy($this->orderBy, $this->orderByOrder)->paginate(
+                    10
+                );
+        }
 
         return view("livewire.rooms.rooms", ["rooms" => $rooms]);
     }
@@ -51,6 +64,11 @@ class RoomsLivewire extends Component
 
     public function store()
     {
+        $dept =
+            Auth::user()->department_dept_id == null
+                ? $this->department_dept_id
+                : Auth::user()->department_dept_id;
+
         $this->validate([
             "room_name" => "required",
         ]);
@@ -59,7 +77,7 @@ class RoomsLivewire extends Component
             ["room_id" => $this->room_id],
             [
                 "room_name" => $this->room_name,
-                "department_dept_id" => Auth::user()->department_dept_id,
+                "department_dept_id" => $dept,
             ]
         );
 
@@ -80,6 +98,7 @@ class RoomsLivewire extends Component
         $room = Room::findOrFail($room_id);
         $this->room_id = $room->room_id;
         $this->room_name = $room->room_name;
+        $this->department_dept_id = $room->department_dept_id;
         $this->openEdit = true;
     }
 

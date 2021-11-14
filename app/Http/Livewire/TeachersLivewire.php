@@ -26,36 +26,82 @@ class TeachersLivewire extends Component
 
     public function render()
     {
-        if ($this->searchBy == "all") {
-            $teachers = $this->search
-                ? Teacher::where(
-                    "first_name",
+        if (Auth::user()->department_dept_id != null) {
+            if ($this->searchBy == "all") {
+                $teachers = $this->search
+                    ? Teacher::where(
+                        "first_name",
+                        "like",
+                        "%" . $this->search . "%"
+                    )
+                        ->orWhere(
+                            "middle_name",
+                            "like",
+                            "%" . $this->search . "%"
+                        )
+                        ->orWhere(
+                            "last_name",
+                            "like",
+                            "%" . $this->search . "%"
+                        )
+                        ->where(
+                            "department_dept_id",
+                            Auth::user()->department_dept_id
+                        )
+                        ->orderBy($this->orderBy, $this->orderByOrder)
+                        ->paginate(20)
+                    : Teacher::where(
+                        "department_dept_id",
+                        Auth::user()->department_dept_id
+                    )
+                        ->orderBy($this->orderBy, $this->orderByOrder)
+                        ->paginate(20);
+            } else {
+                $teachers = Teacher::where(
+                    $this->searchBy,
                     "like",
                     "%" . $this->search . "%"
                 )
-                    ->orWhere("middle_name", "like", "%" . $this->search . "%")
-                    ->orWhere("last_name", "like", "%" . $this->search . "%")
                     ->where(
                         "department_dept_id",
                         Auth::user()->department_dept_id
                     )
                     ->orderBy($this->orderBy, $this->orderByOrder)
-                    ->paginate(20)
-                : Teacher::where(
-                    "department_dept_id",
-                    Auth::user()->department_dept_id
+                    ->paginate(20);
+            }
+        } else {
+            if ($this->searchBy == "all") {
+                $teachers = $this->search
+                    ? Teacher::where(
+                        "first_name",
+                        "like",
+                        "%" . $this->search . "%"
+                    )
+                        ->orWhere(
+                            "middle_name",
+                            "like",
+                            "%" . $this->search . "%"
+                        )
+                        ->orWhere(
+                            "last_name",
+                            "like",
+                            "%" . $this->search . "%"
+                        )
+                        ->orderBy($this->orderBy, $this->orderByOrder)
+                        ->paginate(20)
+                    : Teacher::orderBy(
+                        $this->orderBy,
+                        $this->orderByOrder
+                    )->paginate(20);
+            } else {
+                $teachers = Teacher::where(
+                    $this->searchBy,
+                    "like",
+                    "%" . $this->search . "%"
                 )
                     ->orderBy($this->orderBy, $this->orderByOrder)
                     ->paginate(20);
-        } else {
-            $teachers = Teacher::where(
-                $this->searchBy,
-                "like",
-                "%" . $this->search . "%"
-            )
-                ->where("department_dept_id", Auth::user()->department_dept_id)
-                ->orderBy($this->orderBy, $this->orderByOrder)
-                ->paginate(20);
+            }
         }
 
         return view("livewire.teachers.teachers", ["teachers" => $teachers]);
@@ -71,6 +117,11 @@ class TeachersLivewire extends Component
 
     public function store()
     {
+        $dept =
+            Auth::user()->department_dept_id == null
+                ? $this->department_dept_id
+                : Auth::user()->department_dept_id;
+
         $this->validate([
             "first_name" => "required",
             "middle_name" => "required",
@@ -83,7 +134,7 @@ class TeachersLivewire extends Component
                 "first_name" => $this->first_name,
                 "middle_name" => $this->middle_name,
                 "last_name" => $this->last_name,
-                "department_dept_id" => Auth::user()->department_dept_id,
+                "department_dept_id" => $dept,
             ]
         );
 
@@ -106,6 +157,7 @@ class TeachersLivewire extends Component
         $this->first_name = $teacher->first_name;
         $this->middle_name = $teacher->middle_name;
         $this->last_name = $teacher->last_name;
+        $this->department_dept_id = $teacher->department_dept_id;
         $this->openEdit = true;
     }
 
