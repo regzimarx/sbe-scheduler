@@ -36,8 +36,8 @@ class SubjectsLivewire extends Component
                         "like",
                         "%" . $this->search . "%"
                     )
-                    ->orderBy($this->orderBy, $this->orderByOrder)
-                    ->paginate(10)
+                        ->orderBy($this->orderBy, $this->orderByOrder)
+                        ->paginate(10)
                     : Subject::orderBy(
                         $this->orderBy,
                         $this->orderByOrder
@@ -59,18 +59,18 @@ class SubjectsLivewire extends Component
                         "like",
                         "%" . $this->search . "%"
                     )
-                    ->where(
-                        "department_dept_id",
-                        Auth::user()->department_dept_id
-                    )
-                    ->orderBy($this->orderBy, $this->orderByOrder)
-                    ->paginate(10)
+                        ->where(
+                            "department_dept_id",
+                            Auth::user()->department_dept_id
+                        )
+                        ->orderBy($this->orderBy, $this->orderByOrder)
+                        ->paginate(10)
                     : Subject::where(
                         "department_dept_id",
                         Auth::user()->department_dept_id
                     )
-                    ->orderBy($this->orderBy, $this->orderByOrder)
-                    ->paginate(10);
+                        ->orderBy($this->orderBy, $this->orderByOrder)
+                        ->paginate(10);
             } else {
                 $subjects = Subject::where(
                     $this->searchBy,
@@ -99,13 +99,15 @@ class SubjectsLivewire extends Component
 
     public function store()
     {
-
-        $dept = Auth::user()->department_dept_id == null ?  $this->department_dept_id :  Auth::user()->department_dept_id;
+        $dept =
+            Auth::user()->department_dept_id == null
+                ? $this->department_dept_id
+                : Auth::user()->department_dept_id;
 
         if (Auth::user()->department_dept_id == null) {
             $this->validate([
                 "subject_name" => "required",
-                "department_dept_id" => 'required',
+                "department_dept_id" => "required",
             ]);
         } else {
             $this->validate([
@@ -117,7 +119,7 @@ class SubjectsLivewire extends Component
             ["subject_id" => $this->subject_id],
             [
                 "subject_name" => $this->subject_name,
-                "department_dept_id" => $dept
+                "department_dept_id" => $dept,
             ]
         );
 
