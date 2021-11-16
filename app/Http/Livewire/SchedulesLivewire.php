@@ -68,11 +68,8 @@ class SchedulesLivewire extends Component
             )->get();
         } else {
             $this->subjects = Subject::all();
-
             $this->teachers = Teacher::all();
-
             $this->sections = Section::all();
-
             $this->rooms = Room::all();
         }
 
@@ -453,5 +450,11 @@ class SchedulesLivewire extends Component
         $this->time_start = null;
         $this->schedule_id = null;
         $this->schedule_id = null;
+    }
+
+    //================== PRINT ==============================
+
+    public function downloadSchedule()
+    {
     }
 }
