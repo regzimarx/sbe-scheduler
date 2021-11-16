@@ -1,5 +1,5 @@
 <div class="text-center pb-10">
-    <svg width="96" height="96" fill="none" class="mx-auto mt-20 mb-6 text-gray-600 dark:text-gray-100">
+    <svg width="96" height="96" fill="none" class="mx-auto mt-20 mb-6 text-gray-600 dark:text-gray-500">
         <path d="M36 28.024A18.05 18.05 0 0025.022 39M59.999 28.024A18.05 18.05 0 0170.975 39" stroke="currentColor"
             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
         <ellipse cx="37.5" cy="43.5" rx="4.5" ry="7.5" fill="currentColor"></ellipse>
@@ -11,5 +11,5 @@
             d="M41.997 71.75A14.94 14.94 0 0148 70.5c2.399 0 4.658.56 6.661 1.556a3 3 0 003.999-4.066 12 12 0 00-10.662-6.49 11.955 11.955 0 00-7.974 3.032c1.11 2.37 1.917 4.876 1.972 7.217z"
             fill="currentColor"></path>
     </svg>
-    <h3 class="font-bold text-gray-600 dark:text-gray-100">Nothing here.</h3>
+    <h3 class="font-bold text-gray-600 dark:text-gray-500">Nothing here.</h3>
 </div>
