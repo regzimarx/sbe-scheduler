@@ -159,7 +159,12 @@
                             </tr>
                             @if ($openMore && $student->student_id == $studentMore->student_id)
                                 <tr wire:model="openMore">
-                                    <td colspan="6">
+                                    <td colspan=" @if (Auth::user()->department_dept_id ==
+                                        null)
+                                        8
+                                    @else
+                                        7
+                                        @endif">
                                         <div class="m-10" class="transition duration-500 ease-in-out">
                                             <p
                                                 class="mb-5 text-lg text-center font-semibold text-gray-700 dark:text-gray-300">

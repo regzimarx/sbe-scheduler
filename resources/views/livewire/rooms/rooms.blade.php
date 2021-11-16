@@ -84,7 +84,12 @@
                         @endforeach
                     @else
                         <tr>
-                            <td colspan="3">
+                            <td colspan=" @if (Auth::user()->department_dept_id ==
+                                null)
+                                4
+                            @else
+                                3
+                                @endif">
                                 @include('includes.no-result')
                             </td>
                         </tr>

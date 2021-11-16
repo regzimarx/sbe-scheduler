@@ -183,8 +183,8 @@
                             </tr>
                             @if ($openMore && $sec->section_id == $section->section_id)
                                 <tr>
-                                    <td colspan=" @if (Auth::user()->department_dept_id ==
-                                        null)
+                                    <td colspan="  @if (Auth::user()->department_dept_id
+                                        == null)
                                         6
                                     @else
                                         5
