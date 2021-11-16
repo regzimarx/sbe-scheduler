@@ -11,5 +11,5 @@
             d="M41.997 71.75A14.94 14.94 0 0148 70.5c2.399 0 4.658.56 6.661 1.556a3 3 0 003.999-4.066 12 12 0 00-10.662-6.49 11.955 11.955 0 00-7.974 3.032c1.11 2.37 1.917 4.876 1.972 7.217z"
             fill="currentColor"></path>
     </svg>
-    <h3 class="font-bold text-gray-600 dark:text-gray-100">Nothing yet.</h3>
+    <h3 class="font-bold text-gray-600 dark:text-gray-100">Nothing here.</h3>
 </div>

@@ -111,9 +111,18 @@
                                         @if ($dept == 1) Elementary @elseif ($dept == 2) Junior High School @elseif ($dept == 3) Senior High School @endif
                                     </td>
                                 @endif
-                                <td class="px-4 py-2">
+                                <td class="px-4 py-2 flex">
+                                    <a href="{{ route('preview', ['section_id' => $sec->section_id]) }}"
+                                        target="_blank"
+                                        class="mt-4 mb-4 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-green-400 border border-transparent rounded-md active:bg-green-600 hover:bg-green-700 focus:outline-none focus:shadow-outline-green">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                        </svg>
+                                    </a>
                                     <button wire:click.prevent="edit({{ $sec->section_id }})"
-                                        class="mt-4 mb-4 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-yellow-400 border border-transparent rounded-md active:bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:shadow-outline-purple">
+                                        class="mt-4 mb-4 ml-1 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-yellow-400 border border-transparent rounded-md active:bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:shadow-outline-purple">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -121,7 +130,7 @@
                                         </svg>
                                     </button>
                                     <button wire:click.prevent="openDelete({{ $sec->section_id }})"
-                                        class="mt-4 mb-4 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-red-400 border border-transparent rounded-md active:bg-red-600 hover:bg-red-700 focus:outline-none focus:shadow-outline-purple">
+                                        class="mt-4 mb-4 ml-1 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-red-400 border border-transparent rounded-md active:bg-red-600 hover:bg-red-700 focus:outline-none focus:shadow-outline-purple">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -131,7 +140,7 @@
                                     @if ($sec->department_dept_id != 1)
                                         <button
                                             wire:click.prevent="makeStarModal({{ $sec->section_id }}, {{ $sec->department_dept_id }})"
-                                            class="mt-4 mb-4 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-400 border border-transparent rounded-md active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-purple">
+                                            class="mt-4 mb-4 ml-1 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-400 border border-transparent rounded-md active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-purple">
                                             @if ($sec->is_star)
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
                                                     viewBox="0 0 20 20" fill="currentColor">
@@ -148,11 +157,12 @@
                                             @endif
                                         </button>
                                     @endif
+
                                     <!-- Toggle buttons -->
 
                                     @if ($openMore && $sec->section_id == $section->section_id)
                                         <button wire:click.prevent="closeMoreModal()"
-                                            class="mt-4 mb-4 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-gray-400 border border-transparent rounded-md active:bg-gray-600 hover:bg-gray-700 focus:outline-none focus:shadow-outline-gray">
+                                            class="mt-4 mb-4 ml-1 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-gray-400 border border-transparent rounded-md active:bg-gray-600 hover:bg-gray-700 focus:outline-none focus:shadow-outline-gray">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                                                 viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -161,7 +171,7 @@
                                         </button>
                                     @else
                                         <button wire:click.prevent="openMoreModal({{ $sec->section_id }})"
-                                            class="mt-4 mb-4 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-gray-400 border border-transparent rounded-md active:bg-gray-600 hover:bg-gray-700 focus:outline-none focus:shadow-outline-gray">
+                                            class="mt-4 mb-4 ml-1 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-gray-400 border border-transparent rounded-md active:bg-gray-600 hover:bg-gray-700 focus:outline-none focus:shadow-outline-gray">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                                                 viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -173,7 +183,12 @@
                             </tr>
                             @if ($openMore && $sec->section_id == $section->section_id)
                                 <tr>
-                                    <td colspan="5">
+                                    <td colspan=" @if (Auth::user()->department_dept_id ==
+                                        null)
+                                        6
+                                    @else
+                                        5
+                                        @endif">
                                         <div class="m-3">
                                             <p
                                                 class="mb-3 text-lg text-center font-semibold text-gray-700 dark:text-gray-300">

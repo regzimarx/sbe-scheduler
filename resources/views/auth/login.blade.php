@@ -64,6 +64,12 @@
                                 {{ __('Forgot your password?') }}
                             </a>
                         </p>
+                        <p class="mt-4">
+                            <a class="text-sm font-medium text-purple-600 dark:text-purple-400 hover:underline"
+                                href="{{ route('register') }}">
+                                {{ __('Create an account') }}
+                            </a>
+                        </p>
                     </div>
                 </div>
             </div>
