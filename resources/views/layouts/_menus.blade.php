@@ -88,5 +88,19 @@
                 <span class="ml-4">Schedules</span>
             </a>
         </li>
+        @if (Auth::user()->admin_type == 'superadmin')
+            <li class="relative px-6 py-3">
+                {!! request()->routeIs('users') ? '<span class="absolute inset-y-0 left-0 w-1 bg-pink-600 rounded-tr-lg rounded-br-lg" aria-hidden="true"></span>' : '' !!}
+                <a class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 {!! request()->routeIs('users') ? 'text-pink-700 dark:text-pink-200' : '' !!}"
+                    href="{{ route('users') }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span class="ml-4">Users</span>
+                </a>
+            </li>
+        @endif
     </ul>
 </div>

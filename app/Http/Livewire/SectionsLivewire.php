@@ -276,16 +276,18 @@ class SectionsLivewire extends Component
 
         // Assign top 40 students to star section
 
+        $dept =
+            Auth::user()->department_dept_id == null
+                ? $this->department_dept_id
+                : Auth::user()->department_dept_id;
+
         if ($this->star_section_classes) {
             foreach ($this->star_section_classes as $classes) {
                 $classes->section_section_id = $new_star_section->section_id;
                 $classes->save();
             }
         } else {
-            $students = Student::where(
-                "department_dept_id",
-                Auth::user()->department_dept_id
-            )
+            $students = Student::where("department_dept_id", $dept)
                 ->where("grade_level", $new_star_section->grade_level)
                 ->orderBy("gpa", "desc")
                 ->limit(40)

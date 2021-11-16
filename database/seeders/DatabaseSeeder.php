@@ -53,7 +53,7 @@ class DatabaseSeeder extends Seeder
             ->where("admin_type", "superadmin")
             ->first();
         DB::table("teams")->insert([
-            "user_id" => $super_admin->user_id,
+            "user_id" => $super_admin->id,
             "name" => Str::random(10),
             "personal_team" => true,
         ]);
@@ -85,9 +85,9 @@ class DatabaseSeeder extends Seeder
 
         // Add teams to avoid errors when creating users
         $teams = [
-            $elementary_admin->user_id,
-            $junior_high_admin->user_id,
-            $senior_high_admin->user_id,
+            $elementary_admin->id,
+            $junior_high_admin->id,
+            $senior_high_admin->id,
         ];
 
         foreach ($teams as $team) {
