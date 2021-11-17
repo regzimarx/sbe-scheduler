@@ -1,4 +1,4 @@
-# SBE Cheduler
+# SBE Scheduler
 
 This project is created with Larawind
 
