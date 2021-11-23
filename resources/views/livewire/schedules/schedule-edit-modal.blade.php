@@ -45,23 +45,29 @@
                         @endforeach
                     </select>
                     <label class="block text-sm mt-4">
+                        <label class="mb-2 dark:text-gray-300">Start time</label>
                         <input
                             class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                             placeholder="Enter start time" type="time" wire:model="time_start" id="time_start" />
                     </label>
                     <label class="block text-sm mt-4">
+                        <label class="mb-2 dark:text-gray-300">End time</label>
                         <input
                             class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                             placeholder="Enter end time" type="time" wire:model="time_end" id="time_end" />
                     </label>
-                    <select
-                        class="block w-full mt-4 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
-                        wire:model="day" id="day" multiple>
-                        <option value="" disabled>Please select day (CTRL + click to select multiple days)</option>
-                        @foreach ($days as $day)
-                            <option value="{{ $day }}">{{ $day }}</option>
-                        @endforeach
-                    </select>
+                    <label class="block text-sm mt-4">
+                        <label class="mb-2 dark:text-gray-300">Days</label>
+                        <select
+                            class="block w-full mt-4 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                            wire:model="day" id="day" multiple>
+                            <option value="" disabled>Please select day/s (CTRL + click to select multiple days)
+                            </option>
+                            @foreach ($days as $day)
+                                <option value="{{ $day }}">{{ $day }}</option>
+                            @endforeach
+                        </select>
+                    </label>
                 </form>
             </div>
             <footer
