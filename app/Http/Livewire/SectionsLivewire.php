@@ -379,6 +379,7 @@ class SectionsLivewire extends Component
     {
         $this->addStudentsToSection = false;
         $this->student_to_add = null;
+        $this->student_name = null;
     }
 
     public function searchStudentToAdd()
