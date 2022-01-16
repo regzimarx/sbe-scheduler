@@ -21,12 +21,15 @@ class SectionsLivewire extends Component
         $grade_level,
         $department_dept_id,
         $student,
-        $searchBy;
+        $student_to_add,
+        $searchBy,
+        $student_name;
     public $openEdit,
         $openDelete,
         $openMore,
         $removeStudent,
-        $openMakestar = false;
+        $openMakestar,
+        $addStudentsToSection = false;
     public $search = "";
     public $orderBy = "section_id";
     public $orderByOrder = "asc";
@@ -365,5 +368,44 @@ class SectionsLivewire extends Component
         $this->grade_level = $section->grade_level;
         $this->department_dept_id = $section->department_dept_id;
         $this->is_star = $section->is_star;
+    }
+
+    public function openAddStudentsToSection()
+    {
+        $this->addStudentsToSection = true;
+    }
+
+    public function closeAddStudentModal()
+    {
+        $this->addStudentsToSection = false;
+        $this->student_to_add = null;
+    }
+
+    public function searchStudentToAdd()
+    {
+        $this->student_to_add = null;
+        $this->student = Student::where("first_name", $this->student_name)
+            ->orWhere("middle_name", $this->student_name)
+            ->orWhere("last_name", $this->student_name)
+            ->first();
+
+        if ($this->student) {
+            if ($this->student->grade_level == $this->section->grade_level) {
+                $this->student_to_add = $this->student;
+            } else {
+                $this->student_to_add = null;
+            }
+        }
+    }
+
+    public function addToSection()
+    {
+        StudentsClass::create([
+            "student_student_id" => $this->student_to_add->student_id,
+            "section_section_id" => $this->section->section_id,
+        ]);
+        session()->flash("message", "Student added to section successfully.");
+        $this->student_to_add = null;
+        $this->student_name = null;
     }
 }

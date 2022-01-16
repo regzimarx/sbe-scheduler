@@ -39,6 +39,7 @@
         @if ($removeStudent)
             @include('livewire.sections.section-remove-student-modal')
         @endif
+        @include('livewire.sections.section-add-students-modal')
         <div class="w-full overflow-x-auto">
             <table class="table-auto w-full">
                 <thead>
@@ -183,7 +184,7 @@
                             </tr>
                             @if ($openMore && $sec->section_id == $section->section_id)
                                 <tr>
-                                    <td colspan=" @if (Auth::user()->department_dept_id == null)
+                                    <td colspan="           @if (Auth::user()->department_dept_id == null)
                                         6
                                     @else
                                         5
@@ -194,7 +195,10 @@
                                                 Students in this section
                                             </p>
                                             <div class="w-full">
-                                                
+                                                <button wire:click.prevent="openAddStudentsToSection()"
+                                                    class="mt-4 mb-4 ml-1 px-2 py-1 text-base leading-5 text-white transition-colors duration-150 bg-red-400 border border-transparent rounded-md active:bg-red-600 hover:bg-red-700 focus:outline-none focus:shadow-outline-purple">
+                                                    Add students to section
+                                                </button><br><br>
                                             </div>
                                             <div class="grid gap-3 grid-cols-5">
                                                 @foreach ($sec->students as $student)
