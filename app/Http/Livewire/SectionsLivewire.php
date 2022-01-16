@@ -254,6 +254,7 @@ class SectionsLivewire extends Component
         // Check if there's already a star section
         $old_star_section = Section::where("is_star", true)
             ->where("department_dept_id", $this->department_dept_id)
+            ->where("grade_Level", $this->grade_level)
             ->first();
 
         if ($old_star_section) {

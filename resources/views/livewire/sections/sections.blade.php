@@ -183,8 +183,7 @@
                             </tr>
                             @if ($openMore && $sec->section_id == $section->section_id)
                                 <tr>
-                                    <td colspan="  @if (Auth::user()->department_dept_id
-                                        == null)
+                                    <td colspan=" @if (Auth::user()->department_dept_id == null)
                                         6
                                     @else
                                         5
@@ -194,6 +193,9 @@
                                                 class="mb-3 text-lg text-center font-semibold text-gray-700 dark:text-gray-300">
                                                 Students in this section
                                             </p>
+                                            <div class="w-full">
+                                                
+                                            </div>
                                             <div class="grid gap-3 grid-cols-5">
                                                 @foreach ($sec->students as $student)
                                                     <div class="p-3 rounded-lg bg-purple-700">
