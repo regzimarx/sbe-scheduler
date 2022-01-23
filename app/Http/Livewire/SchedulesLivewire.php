@@ -21,7 +21,7 @@ class SchedulesLivewire extends Component
     public $orderBy = "schedule_id";
     public $openEdit,
         $openDelete = false;
-    public $schedule_id, $searchBy;
+    public $schedule_id, $searchBy, $existing_schedule;
 
     // Vars for create/edit
 
@@ -74,7 +74,6 @@ class SchedulesLivewire extends Component
         }
 
         $this->days = [
-            "Everyday",
             "Monday",
             "Tuesday",
             "Wednesday",
@@ -362,25 +361,68 @@ class SchedulesLivewire extends Component
             "time_start" => "required",
         ]);
 
-        Schedule::updateOrCreate(
-            ["schedule_id" => $this->schedule_id],
-            [
-                "subject_subject_id" => $this->subject_id,
-                "time_end" => $this->time_end,
-                "room_room_id" => $this->room_id,
-                "time_start" => $this->time_start,
-                "teacher_teacher_id" => $this->teacher_id,
-                "section_section_id" => $this->section_id,
-                "day" => collect($this->day)->implode(", "),
-            ]
-        );
+        // Check if there are schedules overlapping the new schedule
 
-        session()->flash(
-            "message",
-            $this->schedule_id
-                ? "Schedule updated successfully."
-                : "Schedule created successfully."
-        );
+        $this->existing_schedule = Schedule::where(
+            "day",
+            collect($this->day)->implode(", ")
+        )
+            ->whereBetween("time_start", [$this->time_start, $this->time_end])
+            ->first();
+
+        // Assign varaibles
+        $time_start_orig = $this->time_start;
+        $time_start_separate = explode(":", $this->time_start);
+        $time_start_hour = intval($time_start_separate[0]);
+        $time_start_min = intval($time_start_separate[1]);
+        $time_start_hour_convert = $time_start_hour * 60;
+        $total_start_time_min = $time_start_hour_convert + $time_start_min;
+
+        $time_end_separate = explode(":", $this->time_end);
+        $time_end_hour = intval($time_end_separate[0]);
+        $time_end_min = intval($time_end_separate[1]);
+        $time_end_hour_convert = $time_end_hour * 60;
+        $total_end_time_min = $time_end_hour_convert + $time_end_min;
+
+        $time_diff = $total_end_time_min - $total_start_time_min;
+        $sched_interval = Auth::user()->department_dept_id == 1 ? 50 : 90;
+
+        if (
+            $this->existing_schedule &&
+            $this->existing_schedule->teacher_teacher_id == $this->teacher_id
+        ) {
+            session()->flash("warning", "Schedule has conflict!");
+        } else {
+            // Check if correct interval
+            if ($time_diff == $sched_interval) {
+                Schedule::updateOrCreate(
+                    ["schedule_id" => $this->schedule_id],
+                    [
+                        "subject_subject_id" => $this->subject_id,
+                        "time_end" => $this->time_end,
+                        "room_room_id" => $this->room_id,
+                        "time_start" => $this->time_start,
+                        "teacher_teacher_id" => $this->teacher_id,
+                        "section_section_id" => $this->section_id,
+                        "day" => collect($this->day)->implode(", "),
+                    ]
+                );
+                $this->schedule_id
+                    ? session()->flash(
+                        "message",
+                        "Schedule updated successfully!"
+                    )
+                    : session()->flash(
+                        "message",
+                        "Schedule added successfully!"
+                    );
+            } else {
+                session()->flash(
+                    "warning",
+                    "Schedule should be " . $sched_interval . " minutes long."
+                );
+            }
+        }
 
         $this->clearData();
         $this->openEdit = false;
