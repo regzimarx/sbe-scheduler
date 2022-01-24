@@ -97,7 +97,16 @@
                                         @if ($dept == 1) Elementary @elseif ($dept == 2) Junior High School @elseif ($dept == 3) Senior High School @endif
                                     </td>
                                 @endif
-                                <td class="px-4 py-2">
+                                <td class="px-4 py-2 flex">
+                                    <a href="{{ route('teacher-preview', ['teacher_id' => $teacher->teacher_id]) }}"
+                                        target="_blank"
+                                        class="mt-4 mb-4 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-green-400 border border-transparent rounded-md active:bg-green-600 hover:bg-green-700 focus:outline-none focus:shadow-outline-green">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                        </svg>
+                                    </a>
                                     <button wire:click.prevent="edit({{ $teacher->teacher_id }})"
                                         class="mt-4 mb-4 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-yellow-400 border border-transparent rounded-md active:bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:shadow-outline-purple">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
@@ -114,13 +123,104 @@
                                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                         </svg>
                                     </button>
+                                    <!-- Toggle buttons -->
+
+                                    @if ($openMore && $teach->teacher_id == $teacher->teacher_id)
+                                        <button wire:click.prevent="closeMoreModal()"
+                                            class="mt-4 mb-4 ml-1 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-gray-400 border border-transparent rounded-md active:bg-gray-600 hover:bg-gray-700 focus:outline-none focus:shadow-outline-gray">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M5 15l7-7 7 7" />
+                                            </svg>
+                                        </button>
+                                    @else
+                                        <button wire:click.prevent="openMoreModal({{ $teacher->teacher_id }})"
+                                            class="mt-4 mb-4 ml-1 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-gray-400 border border-transparent rounded-md active:bg-gray-600 hover:bg-gray-700 focus:outline-none focus:shadow-outline-gray">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M19 9l-7 7-7-7" />
+                                            </svg>
+                                        </button>
+                                    @endif
                                 </td>
                             </tr>
+                            @if ($openMore && $teach->teacher_id == $teacher->teacher_id)
+                                <tr>
+                                    <td colspan="5">
+                                        <div class="m-3">
+                                            <p
+                                                class="mb-3 text-lg text-center font-semibold text-gray-700 dark:text-gray-300">
+                                                Schedules
+                                            </p>
+                                        </div>
+                                        <table class="table-auto w-full m-5 text-left">
+                                            <thead>
+                                                <tr>
+                                                    <th>Time/Day</th>
+                                                    <th>Monday</th>
+                                                    <th>Tuesday</th>
+                                                    <th>Wednesday</th>
+                                                    <th>Thursday</th>
+                                                    <th>Friday</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($teacher->schedules as $sched)
+                                                    <tr>
+                                                        <td>{{ \Carbon\Carbon::createFromFormat('H:i:s', $sched->time_start)->format('h:i A') }}
+                                                        </td>
+                                                        <td>
+                                                            @php
+                                                                $days_array = explode(', ', $sched->day);
+                                                                if (in_array('Monday', $days_array)) {
+                                                                    echo $sched->subject->subject_name;
+                                                                }
+                                                            @endphp
+                                                        </td>
+                                                        <td>
+                                                            @php
+
+                                                                if (in_array('Tuesday', $days_array)) {
+                                                                    echo $sched->subject->subject_name;
+                                                                }
+                                                            @endphp
+                                                        </td>
+                                                        <td>
+                                                            @php
+
+                                                                if (in_array('Wednesday', $days_array)) {
+                                                                    echo $sched->subject->subject_name;
+                                                                }
+                                                            @endphp
+                                                        </td>
+                                                        <td>
+                                                            @php
+
+                                                                if (in_array('Thursday', $days_array)) {
+                                                                    echo $sched->subject->subject_name;
+                                                                }
+                                                            @endphp
+                                                        </td>
+                                                        <td>
+                                                            @php
+                                                                if (in_array('Friday', $days_array)) {
+                                                                    echo $sched->subject->subject_name;
+                                                                }
+                                                            @endphp
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            @endif
                         @endforeach
                     @else
                         <tr>
-                            <td colspan="  @if (Auth::user()->department_dept_id ==
-                                null)
+                            <td colspan="                     @if (Auth::user()->department_dept_id == null)
                                 6
                             @else
                                 5
@@ -129,6 +229,7 @@
                             </td>
                         </tr>
                     @endif
+
                 </tbody>
             </table>
         </div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Schedule;
 use App\Models\Section;
+use App\Models\Teacher;
 
 use PDF;
 
@@ -43,6 +44,14 @@ class PDFController extends Controller
         return view("livewire.sections.download-schedule", [
             "schedules" => $this->schedules,
             "section" => $this->section,
+        ]);
+    }
+
+    public function teacher($id)
+    {
+        $this->teacher = Teacher::findOrFail($id);
+        return view("livewire.teachers.download-teacher-load", [
+            "teacher" => $this->teacher,
         ]);
     }
 }
