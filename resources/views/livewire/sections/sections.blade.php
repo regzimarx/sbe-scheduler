@@ -113,7 +113,7 @@
                                     </td>
                                 @endif
                                 <td class="px-4 py-2 flex">
-                                    <a href="{{ route('preview', ['section_id' => $sec->section_id]) }}"
+                                    <a href="{{ route('section-preview', ['section_id' => $sec->section_id]) }}"
                                         target="_blank"
                                         class="mt-4 mb-4 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-green-400 border border-transparent rounded-md active:bg-green-600 hover:bg-green-700 focus:outline-none focus:shadow-outline-green">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
@@ -184,7 +184,7 @@
                             </tr>
                             @if ($openMore && $sec->section_id == $section->section_id)
                                 <tr>
-                                    <td colspan="           @if (Auth::user()->department_dept_id == null)
+                                    <td colspan="            @if (Auth::user()->department_dept_id == null)
                                         6
                                     @else
                                         5

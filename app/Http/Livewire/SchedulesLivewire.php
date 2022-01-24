@@ -368,6 +368,8 @@ class SchedulesLivewire extends Component
             collect($this->day)->implode(", ")
         )
             ->whereBetween("time_start", [$this->time_start, $this->time_end])
+            ->orWhereBetween("time_end", [$this->time_start, $this->time_end])
+            ->where("room_room_id", $this->room_id)
             ->first();
 
         // Assign varaibles
@@ -385,11 +387,11 @@ class SchedulesLivewire extends Component
         $total_end_time_min = $time_end_hour_convert + $time_end_min;
 
         $time_diff = $total_end_time_min - $total_start_time_min;
-        $sched_interval = Auth::user()->department_dept_id == 1 ? 50 : 90;
+        $sched_interval = Auth::user()->department_dept_id == 1 ? 50 : 60;
 
         if (
-            $this->existing_schedule &&
-            $this->existing_schedule->teacher_teacher_id == $this->teacher_id
+            $this->existing_schedule ||
+            $this->time_start >= $this->existing_schedule->time_end
         ) {
             session()->flash("warning", "Schedule has conflict!");
         } else {

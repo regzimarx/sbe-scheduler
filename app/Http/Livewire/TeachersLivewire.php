@@ -16,9 +16,12 @@ class TeachersLivewire extends Component
         $first_name,
         $middle_name,
         $last_name,
-        $department_dept_id;
+        $department_dept_id,
+        $teacher,
+        $teach;
     public $openEdit,
-        $openDelete = false;
+        $openDelete,
+        $openMore = false;
     public $search = "";
     public $orderBy = "teacher_id";
     public $orderByOrder = "asc";
@@ -204,5 +207,19 @@ class TeachersLivewire extends Component
         $this->first_name = null;
         $this->middle_name = null;
         $this->last_name = null;
+    }
+
+    // OPEN MORE
+
+    public function openMoreModal($teacher_id)
+    {
+        $this->teach = Teacher::findOrFail($teacher_id);
+        $this->openMore = true;
+    }
+
+    public function closeMoreModal()
+    {
+        $this->teacher = null;
+        $this->openMore = false;
     }
 }

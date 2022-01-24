@@ -40,7 +40,11 @@ Route::group(
         Route::get("/sections/schedule/preview/{section_id}", [
             PDFController::class,
             "index",
-        ])->name("preview");
+        ])->name("section-preview");
+        Route::get("/teachers/schedule/preview/{teacher_id}", [
+            PDFController::class,
+            "teacher",
+        ])->name("teacher-preview");
         Route::get("/students", StudentsLivewire::class)->name("students");
         Route::get("/subjects", SubjectsLivewire::class)->name("subjects");
         Route::get("/teachers", TeachersLivewire::class)->name("teachers");

@@ -29,4 +29,12 @@ class Teacher extends Model
             " " .
             $this->middle_name;
     }
+
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class)->orderBy(
+            "schedules.time_start",
+            "asc"
+        );
+    }
 }
