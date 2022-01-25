@@ -158,7 +158,6 @@ class StudentsLivewire extends Component
             "middle_name" => "required",
             "last_name" => "required",
             "grade_level" => "required",
-            "gpa" => "required",
         ]);
 
         Student::updateOrCreate(
@@ -189,7 +188,7 @@ class StudentsLivewire extends Component
         if (Auth::user()->department_dept_id != null) {
             return Auth::user()->department_dept_id;
         } else {
-            if (in_array($this->grade_level, [1, 2, 3, 4, 5, 6])) {
+            if (in_array($this->grade_level, [1, 2, 3, 4, 5, 6, 13, 14])) {
                 return 1;
             } elseif (in_array($this->grade_level, [7, 8, 9, 10])) {
                 return 2;

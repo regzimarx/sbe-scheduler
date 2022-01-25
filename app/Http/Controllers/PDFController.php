@@ -11,7 +11,7 @@ use PDF;
 
 class PDFController extends Controller
 {
-    public $section;
+    public $section, $teacher;
     public $schedules;
     //
 
@@ -47,7 +47,7 @@ class PDFController extends Controller
         ]);
     }
 
-    public function teacher($id)
+    public function load_teacher_schedules($id)
     {
         $this->teacher = Teacher::findOrFail($id);
         return view("livewire.teachers.download-teacher-load", [

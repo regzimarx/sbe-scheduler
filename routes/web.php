@@ -43,7 +43,7 @@ Route::group(
         ])->name("section-preview");
         Route::get("/teachers/schedule/preview/{teacher_id}", [
             PDFController::class,
-            "teacher",
+            "load_teacher_schedules",
         ])->name("teacher-preview");
         Route::get("/students", StudentsLivewire::class)->name("students");
         Route::get("/subjects", SubjectsLivewire::class)->name("subjects");

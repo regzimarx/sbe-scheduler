@@ -103,7 +103,13 @@
                                     {{ $student->last_name }}
                                 </td>
                                 <td class="px-4 py-2">
-                                    Grade {{ $student->grade_level }}
+                                    @if ($student->grade_level == 13)
+                                        Kindergarten 1
+                                    @elseif ($student->grade_level == 14)
+                                        Kindergarten 2
+                                    @else
+                                        Grade {{ $student->grade_level }}
+                                    @endif
                                 </td>
                                 <td class="px-4 py-2">
                                     {{ $student->gpa }}
@@ -159,8 +165,7 @@
                             </tr>
                             @if ($openMore && $student->student_id == $studentMore->student_id)
                                 <tr wire:model="openMore">
-                                    <td colspan=" @if (Auth::user()->department_dept_id ==
-                                        null)
+                                    <td colspan="   @if (Auth::user()->department_dept_id == null)
                                         8
                                     @else
                                         7
