@@ -22,7 +22,7 @@ class CreateStudentsTable extends Migration
             $table->string("last_name");
             $table->integer("grade_level");
             $table->foreignIdFor(Department::class)->nullable();
-            $table->integer("gpa");
+            $table->integer("gpa")->nullable();
         });
     }
 

@@ -20,6 +20,10 @@
                     class="block w-full mt-4 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
                     wire:model="grade_level" id="grade_level" wire:model="grade_level">
                     <option value="">Please select grade level</option>
+                    @if (Auth::user()->department_dept_id == 1)
+                        <option value="13">Kindergarten 1</option>
+                        <option value="14">Kindergarten 2</option>
+                    @endif
                     @for ($i = $grade_level_start; $i <= $grade_level_end; $i++)
                         <option value="{{ $i }}" @if ($grade_level == $i)
                             selected

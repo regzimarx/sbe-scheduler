@@ -29,37 +29,27 @@ class DashboardLivewire extends Component
             $this->total_subjects = Subject::where(
                 "department_dept_id",
                 Auth::user()->department_dept_id
-            )
-                ->get()
-                ->count();
+            )->get()->count();
 
             $this->total_students = Student::where(
                 "department_dept_id",
                 Auth::user()->department_dept_id
-            )
-                ->get()
-                ->count();
+            )->get()->count();
 
             $this->total_teachers = Teacher::where(
                 "department_dept_id",
                 Auth::user()->department_dept_id
-            )
-                ->get()
-                ->count();
+            )->get()->count();
 
             $this->total_sections = Section::where(
                 "department_dept_id",
                 Auth::user()->department_dept_id
-            )
-                ->get()
-                ->count();
+            )->get()->count();
 
             $this->total_rooms = Room::where(
                 "department_dept_id",
                 Auth::user()->department_dept_id
-            )
-                ->get()
-                ->count();
+            )->get()->count();
         }
     }
     public function render()
