@@ -40,6 +40,17 @@ class SchedulesLivewire extends Component
         $teachers,
         $students_classes = [];
 
+    public $sched_grade_level,
+        $sched_section,
+        $sched_sections,
+        $sched_room,
+        $sched_rooms,
+        $sched_time_start,
+        $sched_time_end,
+        $sched_day;
+
+    public $sched_section_object, $sched_room_object, $sched_schedules;
+
     protected $perPage = 10;
 
     public function mount()
@@ -73,15 +84,7 @@ class SchedulesLivewire extends Component
             $this->rooms = Room::all();
         }
 
-        $this->days = [
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-            "Sunday",
-        ];
+        $this->days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
     }
 
     public function render()
@@ -336,6 +339,54 @@ class SchedulesLivewire extends Component
             }
         }
 
+        // Set grade levels based on department
+
+        $dept = Auth::user()->department_dept_id;
+
+        if ($dept == 1) {
+            $this->grade_level_start = 1;
+            $this->grade_level_end = 6;
+        } elseif ($dept == 2) {
+            $this->grade_level_start = 7;
+            $this->grade_level_end = 10;
+        } elseif ($dept == 3) {
+            $this->grade_level_start = 11;
+            $this->grade_level_end = 12;
+        } else {
+            $this->grade_level_start = 1;
+            $this->grade_level_end = 12;
+        }
+
+        if ($this->sched_grade_level) {
+            $this->sched_sections = Section::where(
+                "grade_level",
+                $this->sched_grade_level
+            )->get();
+        }
+
+        if ($this->sched_section) {
+            $this->sched_rooms = Room::where(
+                "department_dept_id",
+                Auth::user()->department_dept_id
+            )->get();
+            $this->sched_section_object = Section::where(
+                "section_id",
+                $this->sched_section
+            )->first();
+        }
+
+        if ($this->sched_room) {
+            $this->sched_room_object = Room::where(
+                "room_id",
+                $this->sched_room
+            )->first();
+        }
+
+        $this->sched_schedules = Schedule::where(
+            "section_section_id",
+            $this->sched_section
+        )->get();
+
         return view("livewire.schedules.schedules", [
             "schedules" => $schedules,
         ]);
@@ -389,10 +440,7 @@ class SchedulesLivewire extends Component
         $time_diff = $total_end_time_min - $total_start_time_min;
         $sched_interval = Auth::user()->department_dept_id == 1 ? 50 : 60;
 
-        if (
-            $this->existing_schedule ||
-            $this->time_start >= $this->existing_schedule->time_end
-        ) {
+        if ($this->existing_schedule) {
             session()->flash("warning", "Schedule has conflict!");
         } else {
             // Check if correct interval
@@ -428,6 +476,83 @@ class SchedulesLivewire extends Component
 
         $this->clearData();
         $this->openEdit = false;
+    }
+
+    public function sched_store()
+    {
+        $this->validate([
+            "subject_id" => "required",
+            "day" => "required",
+            "sched_room" => "required",
+            "sched_time_end" => "required",
+            "teacher_id" => "required",
+            "sched_section" => "required",
+            "sched_time_start" => "required",
+        ]);
+
+        // Check if there are schedules overlapping the new schedule
+
+        $this->existing_schedule = Schedule::where(
+            "day",
+            collect($this->day)->implode(", ")
+        )
+            ->whereBetween("time_start", [
+                $this->sched_time_start,
+                $this->sched_time_end,
+            ])
+            ->where("room_room_id", $this->sched_room)
+            ->first();
+
+        // Assign varaibles
+        $time_start_orig = $this->sched_time_start;
+        $time_start_separate = explode(":", $this->sched_time_start);
+        $time_start_hour = intval($time_start_separate[0]);
+        $time_start_min = intval($time_start_separate[1]);
+        $time_start_hour_convert = $time_start_hour * 60;
+        $total_start_time_min = $time_start_hour_convert + $time_start_min;
+
+        $time_end_separate = explode(":", $this->sched_time_end);
+        $time_end_hour = intval($time_end_separate[0]);
+        $time_end_min = intval($time_end_separate[1]);
+        $time_end_hour_convert = $time_end_hour * 60;
+        $total_end_time_min = $time_end_hour_convert + $time_end_min;
+
+        $time_diff = $total_end_time_min - $total_start_time_min;
+        $sched_interval = Auth::user()->department_dept_id == 1 ? 50 : 60;
+
+        if ($this->existing_schedule) {
+            session()->flash("warning", "Schedule has conflict!");
+        } else {
+            // Check if correct interval
+            if ($time_diff == $sched_interval) {
+                Schedule::updateOrCreate(
+                    ["schedule_id" => $this->schedule_id],
+                    [
+                        "subject_subject_id" => $this->subject_id,
+                        "time_end" => $this->sched_time_end,
+                        "room_room_id" => $this->sched_room,
+                        "time_start" => $this->sched_time_start,
+                        "teacher_teacher_id" => $this->teacher_id,
+                        "section_section_id" => $this->sched_section,
+                        "day" => collect($this->day)->implode(", "),
+                    ]
+                );
+                $this->schedule_id
+                    ? session()->flash(
+                        "message",
+                        "Schedule updated successfully!"
+                    )
+                    : session()->flash(
+                        "message",
+                        "Schedule added successfully!"
+                    );
+            } else {
+                session()->flash(
+                    "warning",
+                    "Schedule should be " . $sched_interval . " minutes long."
+                );
+            }
+        }
     }
 
     public function edit($schedule_id)
