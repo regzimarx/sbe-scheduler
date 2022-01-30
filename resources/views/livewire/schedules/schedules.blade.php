@@ -8,6 +8,172 @@
         Schedules
     </h2>
 
+    <div class="mb-20 flex">
+        <form class="w-1/4 p-5">
+            <h2 class="text-2xl">Create new schedule</h2>
+            <select
+                class="block w-full mt-4 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                id="sched_grade_level" wire:model="sched_grade_level">
+                <option value="">Please select grade level</option>
+                @if (Auth::user()->department_dept_id == 1)
+                    <option value="13">Kindergarten 1</option>
+                    <option value="14">Kindergarten 2</option>
+                @endif
+                @for ($i = $grade_level_start; $i <= $grade_level_end; $i++)
+                    <option value="{{ $i }}">
+                        Grade {{ $i }}
+                    </option>
+                @endfor
+            </select>
+            @if ($sched_sections)
+                <select
+                    class="block w-full mt-4 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                    id="sched_section" wire:model="sched_section">
+                    <option value="">Please select section</option>
+                    @foreach ($sched_sections as $section)
+                        <option value="{{ $section->section_id }}">{{ $section->section_name }}</option>
+                    @endforeach
+                </select>
+            @endif
+            @if ($sched_rooms)
+                <select
+                    class="block w-full mt-4 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                    id="sched_room" wire:model="sched_room">
+                    <option value="">Please select room</option>
+                    @foreach ($sched_rooms as $room)
+                        <option value="{{ $room->room_id }}">{{ $room->room_name }}</option>
+                    @endforeach
+                </select>
+            @endif
+            @if ($sched_room)
+                <label class="block text-sm mt-4">
+                    <label class="mb-2 dark:text-gray-300">Start time</label>
+                    <input
+                        class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                        placeholder="Enter start time" type="time" wire:model="sched_time_start"
+                        id="sched_time_start" />
+                </label>
+                <label class="block text-sm mt-4">
+                    <label class="mb-2 dark:text-gray-300">End time</label>
+                    <input
+                        class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                        placeholder="Enter end time" type="time" wire:model="sched_time_end" id="sched_time_end" />
+                </label>
+                <label class="block text-sm mt-4">
+                    <label class="mb-2 dark:text-gray-300">Days</label>
+                    <select
+                        class="block w-full mt-4 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                        wire:model="day" id="day" multiple>
+                        <option value="" disabled>Please select day/s (CTRL + click to select multiple days)
+                        </option>
+                        @foreach ($days as $day)
+                            <option value="{{ $day }}">{{ $day }}</option>
+                        @endforeach
+                    </select>
+                </label>
+                <select
+                    class="block w-full mt-4 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                    wire:model="subject_id" id="subject_id">
+                    <option value="">Please select subject</option>
+                    @foreach ($subjects as $subject)
+                        <option value="{{ $subject->subject_id }}">{{ $subject->subject_name }}</option>
+                    @endforeach
+                </select>
+                <select
+                    class="block w-full mt-4 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                    wire:model="teacher_id" id="teacher_id">
+                    <option value="">Please select teacher</option>
+                    @foreach ($teachers as $teacher)
+                        <option value="{{ $teacher->teacher_id }}">{{ $teacher->last_name }},
+                            {{ $teacher->first_name }} {{ $teacher->middle_name }}</option>
+                    @endforeach
+                </select>
+                <button
+                    class="w-full px-5 py-3 text-sm font-medium leading-5 text-white text-gray-700 transition-colors duration-150 border border-gray-300 rounded-lg dark:text-gray-400 sm:px-4 sm:py-2 sm:w-auto active:bg-transparent hover:border-gray-500 focus:border-gray-500 active:text-gray-500 focus:outline-none focus:shadow-outline-gray mt-3">
+                    Clear
+                </button>
+                <button
+                    class="w-full px-5 py-3 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg sm:w-auto sm:px-4 sm:py-2 active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple mt-3"
+                    wire:click.prevent="sched_store()" type="button">
+                    Save
+                </button>
+            @endif
+        </form>
+        <div class="w-3/4 p-5 mt-2">
+            <h2 class="text-2xl">Summary</h2>
+            @if ($sched_grade_level)
+                <p class="text-xl">Grade level: Grade {{ $sched_grade_level }}</p>
+            @endif
+            @if ($sched_section_object)
+                <p class="text-xl">Section: {{ $sched_section_object->section_name }}</p>
+            @endif
+            @if ($sched_room_object)
+                <p class="text-xl">Room: {{ $sched_room_object->room_name }}</p>
+            @endif
+            <h2 class="text-2xl mt-10">Schedules</h2>
+            <table class="table-auto w-full m-5 text-left border p-2">
+                <thead class="border p-2">
+                    <tr class="border p-2">
+                        <th class="border p-2">Time/Day</th>
+                        <th class="border p-2">Monday</th>
+                        <th class="border p-2">Tuesday</th>
+                        <th class="border p-2">Wednesday</th>
+                        <th class="border p-2">Thursday</th>
+                        <th class="border p-2">Friday</th>
+                    </tr>
+                </thead>
+                <tbody class="border p-2">
+                    @foreach ($sched_schedules as $sched)
+                        <tr class="border p-2">
+                            <td class="border p-2">
+                                {{ \Carbon\Carbon::createFromFormat('H:i:s', $sched->time_start)->format('h:i A') }}
+                            </td>
+                            <td class="border p-2">
+                                @php
+                                    $days_array = explode(', ', $sched->day);
+                                    if (in_array('Monday', $days_array)) {
+                                        echo '<p>Subject: ' . $sched->subject->subject_name . '</p> <p>Teacher: ' . $sched->teacher->getFullNameAttribute() . '</p> <p>Room: ' . $sched->room->room_name . '</p>';
+                                    }
+                                @endphp
+                            </td>
+                            <td class="border p-2">
+                                @php
+
+                                    if (in_array('Tuesday', $days_array)) {
+                                        echo '<p>Subject: ' . $sched->subject->subject_name . '</p> <p>Teacher: ' . $sched->teacher->getFullNameAttribute() . '</p> <p>Room: ' . $sched->room->room_name . '</p>';
+                                    }
+                                @endphp
+                            </td>
+                            <td class="border p-2">
+                                @php
+
+                                    if (in_array('Wednesday', $days_array)) {
+                                        echo '<p>Subject: ' . $sched->subject->subject_name . '</p> <p>Teacher: ' . $sched->teacher->getFullNameAttribute() . '</p> <p>Room: ' . $sched->room->room_name . '</p>';
+                                    }
+                                @endphp
+                            </td>
+                            <td class="border p-2">
+                                @php
+
+                                    if (in_array('Thursday', $days_array)) {
+                                        echo '<p>Subject: ' . $sched->subject->subject_name . '</p> <p>Teacher: ' . $sched->teacher->getFullNameAttribute() . '</p> <p>Room: ' . $sched->room->room_name . '</p>';
+                                    }
+                                @endphp
+                            </td>
+                            <td class="border p-2">
+                                @php
+                                    if (in_array('Friday', $days_array)) {
+                                        echo '<p>Subject: ' . $sched->subject->subject_name . '</p> <p>Teacher: ' . $sched->teacher->getFullNameAttribute() . '</p> <p>Room: ' . $sched->room->room_name . '</p>';
+                                    }
+                                @endphp
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <!-- With avatar -->
     @include('includes.search', ["fields" => [
     "subject_name" => "Subject name",
@@ -25,7 +191,7 @@
         @include('livewire.schedules.schedule-edit-modal')
         @include('livewire.schedules.schedule-delete-modal')
         <div class="w-full overflow-x-auto">
-            <table class="table-auto">
+            <table class="table-auto w-full">
                 <thead>
                     <tr
                         class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
