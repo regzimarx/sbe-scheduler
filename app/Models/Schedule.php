@@ -16,8 +16,6 @@ class Schedule extends Model
 
     protected $primaryKey = "schedule_id";
 
-    public $timestamps = false;
-
     protected $fillable = [
         "schedule_id",
         "subject_subject_id",

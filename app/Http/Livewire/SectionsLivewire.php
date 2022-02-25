@@ -20,6 +20,7 @@ class SectionsLivewire extends Component
         $section_name,
         $grade_level,
         $department_dept_id,
+        $strand,
         $student,
         $student_to_add,
         $searchBy,
@@ -137,6 +138,7 @@ class SectionsLivewire extends Component
         $this->validate([
             "section_name" => "required",
             "grade_level" => "required",
+            "strand" => "required",
         ]);
 
         // Check if section_id is not empty
@@ -152,6 +154,7 @@ class SectionsLivewire extends Component
                     "grade_level" => $this->grade_level,
                     "is_star" => $this->is_star,
                     "department_dept_id" => $this->setDepartment(),
+                    "strand" => $this->strand,
                 ]);
             })
                 ? session()->flash(
@@ -167,6 +170,7 @@ class SectionsLivewire extends Component
                     "is_star" => false,
                     "grade_level" => $this->grade_level,
                     "department_dept_id" => $this->setDepartment(),
+                    "strand" => $this->strand,
                 ]
             );
 

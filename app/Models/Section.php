@@ -19,6 +19,7 @@ class Section extends Model
         "is_star",
         "grade_level",
         "department_dept_id",
+        "strand",
     ];
 
     public function students()

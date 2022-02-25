@@ -23,8 +23,21 @@
     <div class="flex flex-col justify-center items-center py-10">
         <div class="container">
             <div class="flex flex-col justify-center items-center">
-                <h1 class="font-bold text-3xl my-5">Schedules for Grade {{ $section->grade_level }} -
+                <h1 class="font-bold text-3xl">Schedules for Grade {{ $section->grade_level }} -
                     {{ $section->section_name }}</h1>
+                <h2 class="font-bold text-2xl">
+                    @php
+                        $strand = $section->strand;
+                    @endphp
+                    @if ($strand == 'stem')
+                        Science, Technology, Engineering, and Mathematics
+                    @elseif ($strand == 'humss')
+                        Humanities and Social Sciences
+                    @elseif ($strand == 'abm')
+                        Accountancy, Business and Management
+                    @endif
+                </h2>
+                <h2 class="font-bold text-2xl mb-5">Academic Year {{ now()->year }} - {{ now()->year + 1 }}</h2>
                 <table class="table-auto my-5 w-full">
                     <thead>
                         <tr

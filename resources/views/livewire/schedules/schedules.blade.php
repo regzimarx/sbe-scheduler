@@ -8,9 +8,8 @@
         Schedules
     </h2>
 
-    <div class="mb-20 flex">
+    <div class="mb-20 flex shadow-md">
         <form class="w-1/4 p-5">
-            <h2 class="text-2xl">Create new schedule</h2>
             <select
                 class="block w-full mt-4 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
                 id="sched_grade_level" wire:model="sched_grade_level">
@@ -99,80 +98,95 @@
                 </button>
             @endif
         </form>
-        <div class="w-3/4 p-5 mt-2">
-            <h2 class="text-2xl">Summary</h2>
+        <div class="w-3/4 p-5 mt-2 mr-5">
+            <p class="text-xl">Academic Year: {{ now()->year }} - {{ now()->year + 1 }}</p>
             @if ($sched_grade_level)
                 <p class="text-xl">Grade level: Grade {{ $sched_grade_level }}</p>
             @endif
             @if ($sched_section_object)
                 <p class="text-xl">Section: {{ $sched_section_object->section_name }}</p>
+                <p class="text-xl">Strand:
+                    @php
+                        $strand = $sched_section_object->strand;
+                    @endphp
+                    @if ($strand == 'stem')
+                        Science, Technology, Engineering, and Mathematics
+                    @elseif ($strand == 'humss')
+                        Humanities and Social Sciences
+                    @elseif ($strand == 'abm')
+                        Accountancy, Business and Management
+                    @endif
             @endif
+            </p>
             @if ($sched_room_object)
                 <p class="text-xl">Room: {{ $sched_room_object->room_name }}</p>
             @endif
-            <h2 class="text-2xl mt-10">Schedules</h2>
-            <table class="table-auto w-full m-5 text-left border p-2">
-                <thead class="border p-2">
-                    <tr class="border p-2">
-                        <th class="border p-2">Time/Day</th>
-                        <th class="border p-2">Monday</th>
-                        <th class="border p-2">Tuesday</th>
-                        <th class="border p-2">Wednesday</th>
-                        <th class="border p-2">Thursday</th>
-                        <th class="border p-2">Friday</th>
-                    </tr>
-                </thead>
-                <tbody class="border p-2">
-                    @foreach ($sched_schedules as $sched)
+            @if ($sched_section_object)
+                <table class="table-auto w-full m-5 text-left border p-2">
+                    <thead class="border p-2">
                         <tr class="border p-2">
-                            <td class="border p-2">
-                                {{ \Carbon\Carbon::createFromFormat('H:i:s', $sched->time_start)->format('h:i A') }}
-                            </td>
-                            <td class="border p-2">
-                                @php
-                                    $days_array = explode(', ', $sched->day);
-                                    if (in_array('Monday', $days_array)) {
-                                        echo '<p>Subject: ' . $sched->subject->subject_name . '</p> <p>Teacher: ' . $sched->teacher->getFullNameAttribute() . '</p> <p>Room: ' . $sched->room->room_name . '</p>';
-                                    }
-                                @endphp
-                            </td>
-                            <td class="border p-2">
-                                @php
-
-                                    if (in_array('Tuesday', $days_array)) {
-                                        echo '<p>Subject: ' . $sched->subject->subject_name . '</p> <p>Teacher: ' . $sched->teacher->getFullNameAttribute() . '</p> <p>Room: ' . $sched->room->room_name . '</p>';
-                                    }
-                                @endphp
-                            </td>
-                            <td class="border p-2">
-                                @php
-
-                                    if (in_array('Wednesday', $days_array)) {
-                                        echo '<p>Subject: ' . $sched->subject->subject_name . '</p> <p>Teacher: ' . $sched->teacher->getFullNameAttribute() . '</p> <p>Room: ' . $sched->room->room_name . '</p>';
-                                    }
-                                @endphp
-                            </td>
-                            <td class="border p-2">
-                                @php
-
-                                    if (in_array('Thursday', $days_array)) {
-                                        echo '<p>Subject: ' . $sched->subject->subject_name . '</p> <p>Teacher: ' . $sched->teacher->getFullNameAttribute() . '</p> <p>Room: ' . $sched->room->room_name . '</p>';
-                                    }
-                                @endphp
-                            </td>
-                            <td class="border p-2">
-                                @php
-                                    if (in_array('Friday', $days_array)) {
-                                        echo '<p>Subject: ' . $sched->subject->subject_name . '</p> <p>Teacher: ' . $sched->teacher->getFullNameAttribute() . '</p> <p>Room: ' . $sched->room->room_name . '</p>';
-                                    }
-                                @endphp
-                            </td>
+                            <th class="border p-2">Time/Day</th>
+                            <th class="border p-2">Monday</th>
+                            <th class="border p-2">Tuesday</th>
+                            <th class="border p-2">Wednesday</th>
+                            <th class="border p-2">Thursday</th>
+                            <th class="border p-2">Friday</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody class="border p-2">
+                        @foreach ($sched_schedules as $sched)
+                            <tr class="border p-2">
+                                <td class="border p-2">
+                                    {{ \Carbon\Carbon::createFromFormat('H:i:s', $sched->time_start)->format('h:i A') }}
+                                </td>
+                                <td class="border p-2">
+                                    @php
+                                        $days_array = explode(', ', $sched->day);
+                                        if (in_array('Monday', $days_array)) {
+                                            echo '<p>Subject: ' . $sched->subject->subject_name . '</p> <p>Teacher: ' . $sched->teacher->getFullNameAttribute() . '</p> <p>Room: ' . $sched->room->room_name . '</p>';
+                                        }
+                                    @endphp
+                                </td>
+                                <td class="border p-2">
+                                    @php
+
+                                        if (in_array('Tuesday', $days_array)) {
+                                            echo '<p>Subject: ' . $sched->subject->subject_name . '</p> <p>Teacher: ' . $sched->teacher->getFullNameAttribute() . '</p> <p>Room: ' . $sched->room->room_name . '</p>';
+                                        }
+                                    @endphp
+                                </td>
+                                <td class="border p-2">
+                                    @php
+
+                                        if (in_array('Wednesday', $days_array)) {
+                                            echo '<p>Subject: ' . $sched->subject->subject_name . '</p> <p>Teacher: ' . $sched->teacher->getFullNameAttribute() . '</p> <p>Room: ' . $sched->room->room_name . '</p>';
+                                        }
+                                    @endphp
+                                </td>
+                                <td class="border p-2">
+                                    @php
+
+                                        if (in_array('Thursday', $days_array)) {
+                                            echo '<p>Subject: ' . $sched->subject->subject_name . '</p> <p>Teacher: ' . $sched->teacher->getFullNameAttribute() . '</p> <p>Room: ' . $sched->room->room_name . '</p>';
+                                        }
+                                    @endphp
+                                </td>
+                                <td class="border p-2">
+                                    @php
+                                        if (in_array('Friday', $days_array)) {
+                                            echo '<p>Subject: ' . $sched->subject->subject_name . '</p> <p>Teacher: ' . $sched->teacher->getFullNameAttribute() . '</p> <p>Room: ' . $sched->room->room_name . '</p>';
+                                        }
+                                    @endphp
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            @endif
         </div>
     </div>
+
+    <hr><br><br>
 
     <!-- With avatar -->
     @include('includes.search', ["fields" => [

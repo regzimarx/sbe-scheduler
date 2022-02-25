@@ -122,6 +122,7 @@ class SchedulesLivewire extends Component
                             "like",
                             "%" . $this->search . "%"
                         )
+                        ->whereYear("created_at", "=", date("Y"))
                         ->join(
                             "subjects",
                             "schedules.subject_subject_id",
@@ -148,12 +149,13 @@ class SchedulesLivewire extends Component
                         )
                         ->orderBy($this->orderBy, $this->orderByOrder)
                         ->paginate(10)
-                    : Schedule::join(
-                        "subjects",
-                        "schedules.subject_subject_id",
-                        "=",
-                        "subjects.subject_id"
-                    )
+                    : Schedule::whereYear("created_at", "=", date("Y"))
+                        ->join(
+                            "subjects",
+                            "schedules.subject_subject_id",
+                            "=",
+                            "subjects.subject_id"
+                        )
                         ->join(
                             "sections",
                             "schedules.section_section_id",
@@ -180,6 +182,7 @@ class SchedulesLivewire extends Component
                     "like",
                     "%" . $this->search . "%"
                 )
+                    ->whereYear("created_at", "=", date("Y"))
                     ->join(
                         "subjects",
                         "schedules.subject_subject_id",
@@ -244,6 +247,7 @@ class SchedulesLivewire extends Component
                             "like",
                             "%" . $this->search . "%"
                         )
+                        ->whereYear("created_at", "=", date("Y"))
                         ->join(
                             "subjects",
                             "schedules.subject_subject_id",
@@ -274,6 +278,7 @@ class SchedulesLivewire extends Component
                         "subjects.department_dept_id",
                         Auth::user()->department_dept_id
                     )
+                        ->whereYear("created_at", "=", date("Y"))
                         ->join(
                             "subjects",
                             "schedules.subject_subject_id",
@@ -310,6 +315,7 @@ class SchedulesLivewire extends Component
                         "subjects.department_dept_id",
                         Auth::user()->department_dept_id
                     )
+                    ->whereYear("created_at", "=", date("Y"))
                     ->join(
                         "subjects",
                         "schedules.subject_subject_id",
@@ -421,6 +427,7 @@ class SchedulesLivewire extends Component
             ->whereBetween("time_start", [$this->time_start, $this->time_end])
             ->orWhereBetween("time_end", [$this->time_start, $this->time_end])
             ->where("room_room_id", $this->room_id)
+            ->whereYear("created_at", "=", date("Y"))
             ->first();
 
         // Assign varaibles
@@ -501,6 +508,7 @@ class SchedulesLivewire extends Component
                 $this->sched_time_end,
             ])
             ->where("room_room_id", $this->sched_room)
+            ->whereYear("created_at", "=", date("Y"))
             ->first();
 
         // Assign varaibles

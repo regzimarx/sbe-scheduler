@@ -26,6 +26,7 @@ class CreateSchedulesTable extends Migration
             $table->time("time_start", $precision = 0);
             $table->time("time_end", $precision = 0);
             $table->string("day");
+            $table->timestamps();
         });
     }
 

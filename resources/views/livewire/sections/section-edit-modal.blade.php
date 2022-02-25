@@ -25,14 +25,21 @@
                         <option value="14">Kindergarten 2</option>
                     @endif
                     @for ($i = $grade_level_start; $i <= $grade_level_end; $i++)
-                        <option value="{{ $i }}" @if ($grade_level == $i)
-                            selected
-                    @endif
-                    >
-                    Grade {{ $i }}
-                    </option>
+                        <option value="{{ $i }}" @if ($grade_level == $i) selected @endif>
+                            Grade {{ $i }}
+                        </option>
                     @endfor
                 </select>
+                @if (Auth::user()->department_dept_id == 3)
+                    <select
+                        class="block w-full mt-4 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                        wire:model="strand" id="strand" wire:model="strand">
+                        <option value="">Please select strand</option>
+                        <option value="stem">Science, Technology, Engineering, and Mathematics</option>
+                        <option value="humss">Humanities and Social Sciences</option>
+                        <option value="abm">Accountancy, Business and Management</option>
+                    </select>
+                @endif
             </div>
             <footer
                 class="flex flex-col items-center justify-end px-6 py-3 -mx-6 -mb-4 space-y-4 sm:space-y-0 sm:space-x-6 sm:flex-row bg-gray-50 dark:bg-gray-800">

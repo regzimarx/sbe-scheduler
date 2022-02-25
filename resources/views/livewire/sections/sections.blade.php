@@ -79,6 +79,14 @@
                                 </span>
                             </th>
                         @endif
+                        @if (Auth::user()->department_dept_id == 3)
+                            <th class="px-4 py-2">
+                                <span class="flex flex-row items-center">
+                                    Strand
+                                    @include('includes.order-by', ["field" => "strand"])
+                                </span>
+                            </th>
+                        @endif
                         <th class="px-4 py-2">Actions</th>
                     </tr>
                 </thead>
@@ -109,7 +117,27 @@
                                         @php
                                             $dept = $sec->department_dept_id;
                                         @endphp
-                                        @if ($dept == 1) Elementary @elseif ($dept == 2) Junior High School @elseif ($dept == 3) Senior High School @endif
+                                        @if ($dept == 1)
+                                            Elementary
+                                        @elseif ($dept == 2)
+                                            Junior High School
+                                        @elseif ($dept == 3)
+                                            Senior High School
+                                        @endif
+                                    </td>
+                                @endif
+                                @if (Auth::user()->department_dept_id == 3)
+                                    <td class="px-4 py-2">
+                                        @php
+                                            $strand = $sec->strand;
+                                        @endphp
+                                        @if ($strand == 'stem')
+                                            Science, Technology, Engineering, and Mathematics
+                                        @elseif ($strand == 'humss')
+                                            Humanities and Social Sciences
+                                        @elseif ($strand == 'abm')
+                                            Accountancy, Business and Management
+                                        @endif
                                     </td>
                                 @endif
                                 <td class="px-4 py-2 flex">
@@ -184,11 +212,10 @@
                             </tr>
                             @if ($openMore && $sec->section_id == $section->section_id)
                                 <tr>
-                                    <td colspan="             @if (Auth::user()->department_dept_id == null)
-                                        6
+                                    <td
+                                        colspan="             @if (Auth::user()->department_dept_id == null) 6
                                     @else
-                                        5
-                                        @endif">
+                                        5 @endif">
                                         <div class="m-3">
                                             <p
                                                 class="mb-3 text-lg text-center font-semibold text-gray-700 dark:text-gray-300">
