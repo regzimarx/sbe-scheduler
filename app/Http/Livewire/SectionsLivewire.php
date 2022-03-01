@@ -138,7 +138,6 @@ class SectionsLivewire extends Component
         $this->validate([
             "section_name" => "required",
             "grade_level" => "required",
-            "strand" => "required",
         ]);
 
         // Check if section_id is not empty
