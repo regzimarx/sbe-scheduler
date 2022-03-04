@@ -425,8 +425,7 @@ class SchedulesLivewire extends Component
             collect($this->day)->implode(", ")
         )
             ->whereBetween("time_start", [$this->time_start, $this->time_end])
-            ->orWhereBetween("time_end", [$this->time_start, $this->time_end])
-            ->where("room_room_id", $this->room_id)
+            ->where("teacher_teacher_id", $this->teacher_id)
             ->whereYear("created_at", "=", date("Y"))
             ->first();
 
@@ -507,7 +506,7 @@ class SchedulesLivewire extends Component
                 $this->sched_time_start,
                 $this->sched_time_end,
             ])
-            ->where("room_room_id", $this->sched_room)
+            ->where("teacher_teacher_id", $this->teacher_id)
             ->whereYear("created_at", "=", date("Y"))
             ->first();
 
