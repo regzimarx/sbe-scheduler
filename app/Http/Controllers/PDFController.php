@@ -12,7 +12,7 @@ use PDF;
 class PDFController extends Controller
 {
     public $section, $teacher;
-    public $schedules;
+    public $schedules, $time_starts;
     //
 
     public function index($id)
@@ -41,9 +41,12 @@ class PDFController extends Controller
             ->orderBy("time_start", "asc")
             ->get();
 
+        $this->time_starts = $this->schedules->unique("time_start");
+
         return view("livewire.sections.download-schedule", [
             "schedules" => $this->schedules,
             "section" => $this->section,
+            "time_starts" => $this->time_starts,
         ]);
     }
 

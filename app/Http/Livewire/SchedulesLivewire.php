@@ -38,7 +38,8 @@ class SchedulesLivewire extends Component
         $day;
     public $subjects,
         $teachers,
-        $students_classes = [];
+        $students_classes = [],
+        $time_starts = [];
 
     public $sched_grade_level,
         $sched_section,
@@ -393,6 +394,8 @@ class SchedulesLivewire extends Component
             $this->sched_section
         )->get();
 
+        $this->time_starts = $this->sched_schedules->unique("time_start");
+
         return view("livewire.schedules.schedules", [
             "schedules" => $schedules,
         ]);
@@ -446,37 +449,57 @@ class SchedulesLivewire extends Component
         $time_diff = $total_end_time_min - $total_start_time_min;
         $sched_interval = Auth::user()->department_dept_id == 1 ? 50 : 60;
 
-        if ($this->existing_schedule) {
-            session()->flash("warning", "Schedule has conflict!");
+        if ($this->schedule_id) {
+            Schedule::updateOrCreate(
+                ["schedule_id" => $this->schedule_id],
+                [
+                    "subject_subject_id" => $this->subject_id,
+                    "time_end" => $this->time_end,
+                    "room_room_id" => $this->room_id,
+                    "time_start" => $this->time_start,
+                    "teacher_teacher_id" => $this->teacher_id,
+                    "section_section_id" => $this->section_id,
+                    "day" => collect($this->day)->implode(", "),
+                ]
+            );
+            $this->schedule_id
+                ? session()->flash("message", "Schedule updated successfully!")
+                : session()->flash("message", "Schedule added successfully!");
         } else {
-            // Check if correct interval
-            if ($time_diff == $sched_interval) {
-                Schedule::updateOrCreate(
-                    ["schedule_id" => $this->schedule_id],
-                    [
-                        "subject_subject_id" => $this->subject_id,
-                        "time_end" => $this->time_end,
-                        "room_room_id" => $this->room_id,
-                        "time_start" => $this->time_start,
-                        "teacher_teacher_id" => $this->teacher_id,
-                        "section_section_id" => $this->section_id,
-                        "day" => collect($this->day)->implode(", "),
-                    ]
-                );
-                $this->schedule_id
-                    ? session()->flash(
-                        "message",
-                        "Schedule updated successfully!"
-                    )
-                    : session()->flash(
-                        "message",
-                        "Schedule added successfully!"
-                    );
+            if ($this->existing_schedule) {
+                session()->flash("warning", "Schedule has conflict!");
             } else {
-                session()->flash(
-                    "warning",
-                    "Schedule should be " . $sched_interval . " minutes long."
-                );
+                // Check if correct interval
+                if ($time_diff == $sched_interval) {
+                    Schedule::updateOrCreate(
+                        ["schedule_id" => $this->schedule_id],
+                        [
+                            "subject_subject_id" => $this->subject_id,
+                            "time_end" => $this->time_end,
+                            "room_room_id" => $this->room_id,
+                            "time_start" => $this->time_start,
+                            "teacher_teacher_id" => $this->teacher_id,
+                            "section_section_id" => $this->section_id,
+                            "day" => collect($this->day)->implode(", "),
+                        ]
+                    );
+                    $this->schedule_id
+                        ? session()->flash(
+                            "message",
+                            "Schedule updated successfully!"
+                        )
+                        : session()->flash(
+                            "message",
+                            "Schedule added successfully!"
+                        );
+                } else {
+                    session()->flash(
+                        "warning",
+                        "Schedule should be " .
+                            $sched_interval .
+                            " minutes long."
+                    );
+                }
             }
         }
 

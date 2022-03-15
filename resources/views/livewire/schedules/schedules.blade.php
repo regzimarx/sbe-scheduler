@@ -8,8 +8,8 @@
         Schedules
     </h2>
 
-    <div class="mb-20 flex shadow-md">
-        <form class="w-1/4 p-5">
+    <div class="mb-20 shadow-md">
+        <form class="w-full p-5">
             <select
                 class="block w-full mt-4 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
                 id="sched_grade_level" wire:model="sched_grade_level">
@@ -98,34 +98,36 @@
                 </button>
             @endif
         </form>
-        <div class="w-3/4 p-5 mt-2 mr-5">
-            <p class="text-xl">Academic Year: {{ now()->year }} - {{ now()->year + 1 }}</p>
+        <div class="w-full p-5 mt-2 mr-5">
+            <p class="text-xl text-center">Academic Year: {{ now()->year }} - {{ now()->year + 1 }}</p>
             @if ($sched_grade_level)
-                <p class="text-xl">Grade level: Grade {{ $sched_grade_level }}</p>
+                <p class="text-xl text-center">Grade level: Grade {{ $sched_grade_level }}</p>
             @endif
             @if ($sched_section_object)
-                <p class="text-xl">Section: {{ $sched_section_object->section_name }}</p>
-                <p class="text-xl">Strand:
-                    @php
-                        $strand = $sched_section_object->strand;
-                    @endphp
-                    @if ($strand == 'stem')
-                        Science, Technology, Engineering, and Mathematics
-                    @elseif ($strand == 'humss')
-                        Humanities and Social Sciences
-                    @elseif ($strand == 'abm')
-                        Accountancy, Business and Management
-                    @endif
+                <p class="text-xl text-center">Section: {{ $sched_section_object->section_name }}</p>
+                @if (Auth::user()->department_dept_id == 3)
+                    <p class="text-xl text-center">Strand:
+                        @php
+                            $strand = $sched_section_object->strand;
+                        @endphp
+                        @if ($strand == 'stem')
+                            Science, Technology, Engineering, and Mathematics
+                        @elseif ($strand == 'humss')
+                            Humanities and Social Sciences
+                        @elseif ($strand == 'abm')
+                            Accountancy, Business and Management
+                        @endif
+                @endif
             @endif
             </p>
             @if ($sched_room_object)
-                <p class="text-xl">Room: {{ $sched_room_object->room_name }}</p>
+                <p class="text-xl text-center">Room: {{ $sched_room_object->room_name }}</p>
             @endif
             @if ($sched_section_object)
                 <table class="table-auto w-full m-5 text-left border p-2">
                     <thead class="border p-2">
                         <tr class="border p-2">
-                            <th class="border p-2">Time/Day</th>
+                            <th class="border p-2">Time</th>
                             <th class="border p-2">Monday</th>
                             <th class="border p-2">Tuesday</th>
                             <th class="border p-2">Wednesday</th>
@@ -134,49 +136,62 @@
                         </tr>
                     </thead>
                     <tbody class="border p-2">
-                        @foreach ($sched_schedules as $sched)
+                        @foreach ($time_starts as $time)
                             <tr class="border p-2">
                                 <td class="border p-2">
-                                    {{ \Carbon\Carbon::createFromFormat('H:i:s', $sched->time_start)->format('h:i A') }}
+                                    {{ \Carbon\Carbon::createFromFormat('H:i:s', $time->time_start)->format('h:i A') }}
+                                    -
+                                    {{ \Carbon\Carbon::createFromFormat('H:i:s', $time->time_end)->format('h:i A') }}
                                 </td>
                                 <td class="border p-2">
-                                    @php
-                                        $days_array = explode(', ', $sched->day);
-                                        if (in_array('Monday', $days_array)) {
-                                            echo '<p>Subject: ' . $sched->subject->subject_name . '</p> <p>Teacher: ' . $sched->teacher->getFullNameAttribute() . '</p> <p>Room: ' . $sched->room->room_name . '</p>';
-                                        }
-                                    @endphp
+                                    @foreach ($sched_schedules as $sched)
+                                        @if (in_array('Monday', explode(', ', $sched->day)) && $time->time_start == $sched->time_start)
+                                            <p class="font-semibold">{{ $sched->subject->subject_name }}
+                                            </p>
+                                            <p class="italic">{{ $sched->teacher->getFullNameAttribute() }}
+                                            </p>
+                                        @endif
+                                    @endforeach
                                 </td>
                                 <td class="border p-2">
-                                    @php
-
-                                        if (in_array('Tuesday', $days_array)) {
-                                            echo '<p>Subject: ' . $sched->subject->subject_name . '</p> <p>Teacher: ' . $sched->teacher->getFullNameAttribute() . '</p> <p>Room: ' . $sched->room->room_name . '</p>';
-                                        }
-                                    @endphp
+                                    @foreach ($sched_schedules as $sched)
+                                        @if (in_array('Tuesday', explode(', ', $sched->day)) && $time->time_start == $sched->time_start)
+                                            <p class="font-semibold">{{ $sched->subject->subject_name }}
+                                            </p>
+                                            <p class="italic">{{ $sched->teacher->getFullNameAttribute() }}
+                                            </p>
+                                        @endif
+                                    @endforeach
                                 </td>
                                 <td class="border p-2">
-                                    @php
-
-                                        if (in_array('Wednesday', $days_array)) {
-                                            echo '<p>Subject: ' . $sched->subject->subject_name . '</p> <p>Teacher: ' . $sched->teacher->getFullNameAttribute() . '</p> <p>Room: ' . $sched->room->room_name . '</p>';
-                                        }
-                                    @endphp
+                                    @foreach ($sched_schedules as $sched)
+                                        @if (in_array('Wednesday', explode(', ', $sched->day)) && $time->time_start == $sched->time_start)
+                                            <p class="font-semibold">{{ $sched->subject->subject_name }}
+                                            </p>
+                                            <p class="italic">{{ $sched->teacher->getFullNameAttribute() }}
+                                            </p>
+                                        @endif
+                                    @endforeach
                                 </td>
                                 <td class="border p-2">
-                                    @php
-
-                                        if (in_array('Thursday', $days_array)) {
-                                            echo '<p>Subject: ' . $sched->subject->subject_name . '</p> <p>Teacher: ' . $sched->teacher->getFullNameAttribute() . '</p> <p>Room: ' . $sched->room->room_name . '</p>';
-                                        }
-                                    @endphp
+                                    @foreach ($sched_schedules as $sched)
+                                        @if (in_array('Thursday', explode(', ', $sched->day)) && $time->time_start == $sched->time_start)
+                                            <p class="font-semibold">{{ $sched->subject->subject_name }}
+                                            </p>
+                                            <p class="italic">{{ $sched->teacher->getFullNameAttribute() }}
+                                            </p>
+                                        @endif
+                                    @endforeach
                                 </td>
                                 <td class="border p-2">
-                                    @php
-                                        if (in_array('Friday', $days_array)) {
-                                            echo '<p>Subject: ' . $sched->subject->subject_name . '</p> <p>Teacher: ' . $sched->teacher->getFullNameAttribute() . '</p> <p>Room: ' . $sched->room->room_name . '</p>';
-                                        }
-                                    @endphp
+                                    @foreach ($sched_schedules as $sched)
+                                        @if (in_array('Friday', explode(', ', $sched->day)) && $time->time_start == $sched->time_start)
+                                            <p class="font-semibold">{{ $sched->subject->subject_name }}
+                                            </p>
+                                            <p class="italic">{{ $sched->teacher->getFullNameAttribute() }}
+                                            </p>
+                                        @endif
+                                    @endforeach
                                 </td>
                             </tr>
                         @endforeach
@@ -189,17 +204,19 @@
     <hr><br><br>
 
     <!-- With avatar -->
-    @include('includes.search', ["fields" => [
-    "subject_name" => "Subject name",
-    "first_name" => "Teacher first name",
-    "middle_name" => "Teacher middle name",
-    "last_name" => "Teacher last name",
-    "section_name" => "Section name",
-    "room_name" => "Room name",
-    "time_start" => "Start time",
-    "time_end" => "End time",
-    "day" => "Day"
-    ]])
+    @include('includes.search', [
+        'fields' => [
+            'subject_name' => 'Subject name',
+            'first_name' => 'Teacher first name',
+            'middle_name' => 'Teacher middle name',
+            'last_name' => 'Teacher last name',
+            'section_name' => 'Section name',
+            'room_name' => 'Room name',
+            'time_start' => 'Start time',
+            'time_end' => 'End time',
+            'day' => 'Day',
+        ],
+    ])
 
     <div class="w-full my-5 overflow-hidden rounded-lg shadow-xs">
         @include('livewire.schedules.schedule-edit-modal')
@@ -212,49 +229,49 @@
                         <th class="px-4 py-2">
                             <span class="flex flex-row items-center">
                                 Record ID
-                                @include('includes.order-by', ["field" => "schedule_id"])
+                                @include('includes.order-by', ['field' => 'schedule_id'])
                             </span>
                         </th>
                         <th class="px-4 py-2">
                             <span class="flex flex-row items-center">
                                 Subject
-                                @include('includes.order-by', ["field" => "subjects.subject_name"])
+                                @include('includes.order-by', ['field' => 'subjects.subject_name'])
                             </span>
                         </th>
                         <th class="px-4 py-2">
                             <span class="flex flex-row items-center">
                                 Teacher
-                                @include('includes.order-by', ["field" => "teachers.last_name"])
+                                @include('includes.order-by', ['field' => 'teachers.last_name'])
                             </span>
                         </th>
                         <th class="px-4 py-2">
                             <span class="flex flex-row items-center">
                                 Section
-                                @include('includes.order-by', ["field" => "sections.section_name"])
+                                @include('includes.order-by', ['field' => 'sections.section_name'])
                             </span>
                         </th>
                         <th class="px-4 py-2">
                             <span class="flex flex-row items-center">
                                 Room
-                                @include('includes.order-by', ["field" => "rooms.room_name"])
+                                @include('includes.order-by', ['field' => 'rooms.room_name'])
                             </span>
                         </th>
                         <th class="px-4 py-2">
                             <span class="flex flex-row items-center">
                                 Start time
-                                @include('includes.order-by', ["field" => "time_start"])
+                                @include('includes.order-by', ['field' => 'time_start'])
                             </span>
                         </th>
                         <th class="px-4 py-2">
                             <span class="flex flex-row items-center">
                                 End time
-                                @include('includes.order-by', ["field" => "time_end"])
+                                @include('includes.order-by', ['field' => 'time_end'])
                             </span>
                         </th>
                         <th class="px-4 py-2">
                             <span class="flex flex-row items-center">
                                 Day/s
-                                @include('includes.order-by', ["field" => "day"])
+                                @include('includes.order-by', ['field' => 'day'])
                             </span>
                         </th>
                         <th class="px-4 py-2">Actions</th>
