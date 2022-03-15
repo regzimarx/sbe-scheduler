@@ -124,26 +124,26 @@
                 <p class="text-xl text-center">Room: {{ $sched_room_object->room_name }}</p>
             @endif
             @if ($sched_section_object)
-                <table class="table-auto w-full m-5 text-left border p-2">
-                    <thead class="border p-2">
-                        <tr class="border p-2">
-                            <th class="border p-2">Time</th>
-                            <th class="border p-2">Monday</th>
-                            <th class="border p-2">Tuesday</th>
-                            <th class="border p-2">Wednesday</th>
-                            <th class="border p-2">Thursday</th>
-                            <th class="border p-2">Friday</th>
+                <table class="table-auto w-full m-5 text-left border text-center p-2">
+                    <thead class="border text-center p-2">
+                        <tr class="border text-center p-2">
+                            <th class="border text-center p-2">Time</th>
+                            <th class="border text-center p-2">Monday</th>
+                            <th class="border text-center p-2">Tuesday</th>
+                            <th class="border text-center p-2">Wednesday</th>
+                            <th class="border text-center p-2">Thursday</th>
+                            <th class="border text-center p-2">Friday</th>
                         </tr>
                     </thead>
-                    <tbody class="border p-2">
+                    <tbody class="border text-center p-2">
                         @foreach ($time_starts as $time)
-                            <tr class="border p-2">
-                                <td class="border p-2">
+                            <tr class="border text-center p-2">
+                                <td class="border text-center p-2">
                                     {{ \Carbon\Carbon::createFromFormat('H:i:s', $time->time_start)->format('h:i A') }}
                                     -
                                     {{ \Carbon\Carbon::createFromFormat('H:i:s', $time->time_end)->format('h:i A') }}
                                 </td>
-                                <td class="border p-2">
+                                <td class="border text-center p-2">
                                     @foreach ($sched_schedules as $sched)
                                         @if (in_array('Monday', explode(', ', $sched->day)) && $time->time_start == $sched->time_start)
                                             <p class="font-semibold">{{ $sched->subject->subject_name }}
@@ -153,7 +153,7 @@
                                         @endif
                                     @endforeach
                                 </td>
-                                <td class="border p-2">
+                                <td class="border text-center p-2">
                                     @foreach ($sched_schedules as $sched)
                                         @if (in_array('Tuesday', explode(', ', $sched->day)) && $time->time_start == $sched->time_start)
                                             <p class="font-semibold">{{ $sched->subject->subject_name }}
@@ -163,7 +163,7 @@
                                         @endif
                                     @endforeach
                                 </td>
-                                <td class="border p-2">
+                                <td class="border text-center p-2">
                                     @foreach ($sched_schedules as $sched)
                                         @if (in_array('Wednesday', explode(', ', $sched->day)) && $time->time_start == $sched->time_start)
                                             <p class="font-semibold">{{ $sched->subject->subject_name }}
@@ -173,7 +173,7 @@
                                         @endif
                                     @endforeach
                                 </td>
-                                <td class="border p-2">
+                                <td class="border text-center p-2">
                                     @foreach ($sched_schedules as $sched)
                                         @if (in_array('Thursday', explode(', ', $sched->day)) && $time->time_start == $sched->time_start)
                                             <p class="font-semibold">{{ $sched->subject->subject_name }}
@@ -183,7 +183,7 @@
                                         @endif
                                     @endforeach
                                 </td>
-                                <td class="border p-2">
+                                <td class="border text-center p-2">
                                     @foreach ($sched_schedules as $sched)
                                         @if (in_array('Friday', explode(', ', $sched->day)) && $time->time_start == $sched->time_start)
                                             <p class="font-semibold">{{ $sched->subject->subject_name }}
@@ -199,6 +199,14 @@
                 </table>
             @endif
         </div>
+        @if ($sched_section_object)
+            <div class="flex justify-center pb-5"><a
+                    href="{{ route('section-preview', ['section_id' => $sched_section_object->section_id]) }}"
+                    target="_blank"
+                    class="text-lg mt-4 mb-4 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-green-400 border border-transparent rounded-md active:bg-green-600 hover:bg-green-700 focus:outline-none focus:shadow-outline-green">
+                    Generate PDF
+                </a></div>
+        @endif
     </div>
 
     <hr><br><br>
