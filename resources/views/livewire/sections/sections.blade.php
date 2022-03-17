@@ -25,10 +25,12 @@
     </h2>
 
     <!-- With avatar -->
-    @include('includes.search', ["fields" => [
-    "section_name" => "Section name",
-    "grade_level" => "Grade level"
-    ]])
+    @include('includes.search', [
+        'fields' => [
+            'section_name' => 'Section name',
+            'grade_level' => 'Grade level',
+        ],
+    ])
 
     <div class="w-full my-5 overflow-hidden rounded-lg shadow-xs">
         @include('livewire.sections.section-edit-modal')
@@ -48,34 +50,36 @@
                         <th class="px-4 py-2">
                             <span class="flex flex-row items-center">
                                 Record ID
-                                @include('includes.order-by', ["field" => "section_id"])
+                                @include('includes.order-by', ['field' => 'section_id'])
                             </span>
                         </th>
                         <th class="px-4 py-2">
                             <span class="flex flex-row items-center">
                                 Section name
-                                @include('includes.order-by', ["field" => "section_name"])
+                                @include('includes.order-by', ['field' => 'section_name'])
                             </span>
                         </th>
                         @if (Auth::user()->department_dept_id != 1)
                             <th class="px-4 py-2">
                                 <span class="flex flex-row items-center">
                                     Star section?
-                                    @include('includes.order-by', ["field" => "is_star"])
+                                    @include('includes.order-by', ['field' => 'is_star'])
                                 </span>
                             </th>
                         @endif
                         <th class="px-4 py-2">
                             <span class="flex flex-row items-center">
                                 Grade level
-                                @include('includes.order-by', ["field" => "grade_level"])
+                                @include('includes.order-by', ['field' => 'grade_level'])
                             </span>
                         </th>
                         @if (Auth::user()->department_dept_id == null)
                             <th class="px-4 py-2">
                                 <span class="flex flex-row items-center">
                                     Department
-                                    @include('includes.order-by', ["field" => "department_dept_id"])
+                                    @include('includes.order-by', [
+                                        'field' => 'department_dept_id',
+                                    ])
                                 </span>
                             </th>
                         @endif
@@ -83,7 +87,7 @@
                             <th class="px-4 py-2">
                                 <span class="flex flex-row items-center">
                                     Strand
-                                    @include('includes.order-by', ["field" => "strand"])
+                                    @include('includes.order-by', ['field' => 'strand'])
                                 </span>
                             </th>
                         @endif
@@ -141,15 +145,6 @@
                                     </td>
                                 @endif
                                 <td class="px-4 py-2 flex">
-                                    <a href="{{ route('section-preview', ['section_id' => $sec->section_id]) }}"
-                                        target="_blank"
-                                        class="mt-4 mb-4 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-green-400 border border-transparent rounded-md active:bg-green-600 hover:bg-green-700 focus:outline-none focus:shadow-outline-green">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                                        </svg>
-                                    </a>
                                     <button wire:click.prevent="edit({{ $sec->section_id }})"
                                         class="mt-4 mb-4 ml-1 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-yellow-400 border border-transparent rounded-md active:bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:shadow-outline-purple">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"

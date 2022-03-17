@@ -35,7 +35,10 @@ class SchedulesLivewire extends Component
         $section_id,
         $time_start,
         $time_end,
-        $day;
+        $acad_year,
+        $semester,
+        $day,
+        $conflict_counter;
     public $subjects,
         $teachers,
         $students_classes = [],
@@ -57,6 +60,7 @@ class SchedulesLivewire extends Component
     public function mount()
     {
         $this->searchBy = "all";
+        $this->acad_year = now()->year;
 
         if (Auth::user()->department_dept_id != null) {
             $this->subjects = Subject::where(
@@ -123,7 +127,6 @@ class SchedulesLivewire extends Component
                             "like",
                             "%" . $this->search . "%"
                         )
-                        ->whereYear("created_at", "=", date("Y"))
                         ->join(
                             "subjects",
                             "schedules.subject_subject_id",
@@ -150,13 +153,12 @@ class SchedulesLivewire extends Component
                         )
                         ->orderBy($this->orderBy, $this->orderByOrder)
                         ->paginate(10)
-                    : Schedule::whereYear("created_at", "=", date("Y"))
-                        ->join(
-                            "subjects",
-                            "schedules.subject_subject_id",
-                            "=",
-                            "subjects.subject_id"
-                        )
+                    : Schedule::join(
+                        "subjects",
+                        "schedules.subject_subject_id",
+                        "=",
+                        "subjects.subject_id"
+                    )
                         ->join(
                             "sections",
                             "schedules.section_section_id",
@@ -183,7 +185,6 @@ class SchedulesLivewire extends Component
                     "like",
                     "%" . $this->search . "%"
                 )
-                    ->whereYear("created_at", "=", date("Y"))
                     ->join(
                         "subjects",
                         "schedules.subject_subject_id",
@@ -248,7 +249,6 @@ class SchedulesLivewire extends Component
                             "like",
                             "%" . $this->search . "%"
                         )
-                        ->whereYear("created_at", "=", date("Y"))
                         ->join(
                             "subjects",
                             "schedules.subject_subject_id",
@@ -279,7 +279,6 @@ class SchedulesLivewire extends Component
                         "subjects.department_dept_id",
                         Auth::user()->department_dept_id
                     )
-                        ->whereYear("created_at", "=", date("Y"))
                         ->join(
                             "subjects",
                             "schedules.subject_subject_id",
@@ -316,7 +315,6 @@ class SchedulesLivewire extends Component
                         "subjects.department_dept_id",
                         Auth::user()->department_dept_id
                     )
-                    ->whereYear("created_at", "=", date("Y"))
                     ->join(
                         "subjects",
                         "schedules.subject_subject_id",
@@ -392,7 +390,11 @@ class SchedulesLivewire extends Component
         $this->sched_schedules = Schedule::where(
             "section_section_id",
             $this->sched_section
-        )->get();
+        )
+            ->where("semester", $this->semester)
+            ->where("acad_year", $this->acad_year)
+            ->orderBy("time_start", "asc")
+            ->get();
 
         $this->time_starts = $this->sched_schedules->unique("time_start");
 
@@ -412,6 +414,7 @@ class SchedulesLivewire extends Component
     public function store()
     {
         $this->validate([
+            "acad_year" => "required",
             "subject_id" => "required",
             "day" => "required",
             "room_id" => "required",
@@ -422,15 +425,26 @@ class SchedulesLivewire extends Component
         ]);
 
         // Check if there are schedules overlapping the new schedule
+        if (Auth::user()->department_dept_id == 3) {
+            $this->existing_schedule = Schedule::whereBetween("time_start", [
+                $this->time_start,
+                $this->time_end,
+            ])
+                ->where("section_section_id", $this->sched_section)
+                ->where("acad_year", $this->acad_year)
+                ->where("semester", $this->semester)
+                ->get();
+        } else {
+            $this->existing_schedule = Schedule::whereBetween("time_start", [
+                $this->time_start,
+                $this->time_end,
+            ])
+                ->where("section_section_id", $this->sched_section)
+                ->where("acad_year", $this->acad_year)
+                ->get();
+        }
 
-        $this->existing_schedule = Schedule::where(
-            "day",
-            collect($this->day)->implode(", ")
-        )
-            ->whereBetween("time_start", [$this->time_start, $this->time_end])
-            ->where("teacher_teacher_id", $this->teacher_id)
-            ->whereYear("created_at", "=", date("Y"))
-            ->first();
+        $this->checkConflict($this->existing_schedule);
 
         // Assign varaibles
         $time_start_orig = $this->time_start;
@@ -453,6 +467,8 @@ class SchedulesLivewire extends Component
             Schedule::updateOrCreate(
                 ["schedule_id" => $this->schedule_id],
                 [
+                    "acad_year" => $this->acad_year,
+                    "semester" => $this->semester,
                     "subject_subject_id" => $this->subject_id,
                     "time_end" => $this->time_end,
                     "room_room_id" => $this->room_id,
@@ -466,7 +482,7 @@ class SchedulesLivewire extends Component
                 ? session()->flash("message", "Schedule updated successfully!")
                 : session()->flash("message", "Schedule added successfully!");
         } else {
-            if ($this->existing_schedule) {
+            if ($this->conflict_counter > 0) {
                 session()->flash("warning", "Schedule has conflict!");
             } else {
                 // Check if correct interval
@@ -474,6 +490,8 @@ class SchedulesLivewire extends Component
                     Schedule::updateOrCreate(
                         ["schedule_id" => $this->schedule_id],
                         [
+                            "acad_year" => $this->acad_year,
+                            "semester" => $this->semester,
                             "subject_subject_id" => $this->subject_id,
                             "time_end" => $this->time_end,
                             "room_room_id" => $this->room_id,
@@ -510,6 +528,7 @@ class SchedulesLivewire extends Component
     public function sched_store()
     {
         $this->validate([
+            "acad_year" => "required",
             "subject_id" => "required",
             "day" => "required",
             "sched_room" => "required",
@@ -521,17 +540,26 @@ class SchedulesLivewire extends Component
 
         // Check if there are schedules overlapping the new schedule
 
-        $this->existing_schedule = Schedule::where(
-            "day",
-            collect($this->day)->implode(", ")
-        )
-            ->whereBetween("time_start", [
+        if (Auth::user()->department_dept_id == 3) {
+            $this->existing_schedule = Schedule::whereBetween("time_start", [
                 $this->sched_time_start,
                 $this->sched_time_end,
             ])
-            ->where("teacher_teacher_id", $this->teacher_id)
-            ->whereYear("created_at", "=", date("Y"))
-            ->first();
+                ->where("section_section_id", $this->sched_section)
+                ->where("acad_year", $this->acad_year)
+                ->where("semester", $this->semester)
+                ->get();
+        } else {
+            $this->existing_schedule = Schedule::whereBetween("time_start", [
+                $this->sched_time_start,
+                $this->sched_time_end,
+            ])
+                ->where("section_section_id", $this->sched_section)
+                ->where("acad_year", $this->acad_year)
+                ->get();
+        }
+
+        $this->checkConflict($this->existing_schedule);
 
         // Assign varaibles
         $time_start_orig = $this->sched_time_start;
@@ -550,37 +578,76 @@ class SchedulesLivewire extends Component
         $time_diff = $total_end_time_min - $total_start_time_min;
         $sched_interval = Auth::user()->department_dept_id == 1 ? 50 : 60;
 
-        if ($this->existing_schedule) {
-            session()->flash("warning", "Schedule has conflict!");
+        if ($this->schedule_id) {
+            Schedule::updateOrCreate(
+                ["schedule_id" => $this->schedule_id],
+                [
+                    "acad_year" => $this->acad_year,
+                    "semester" => $this->semester,
+                    "subject_subject_id" => $this->subject_id,
+                    "time_end" => $this->sched_time_end,
+                    "room_room_id" => $this->sched_room,
+                    "time_start" => $this->sched_time_start,
+                    "teacher_teacher_id" => $this->teacher_id,
+                    "section_section_id" => $this->sched_section,
+                    "day" => collect($this->day)->implode(", "),
+                ]
+            );
+            $this->schedule_id
+                ? session()->flash("message", "Schedule updated successfully!")
+                : session()->flash("message", "Schedule added successfully!");
         } else {
-            // Check if correct interval
-            if ($time_diff == $sched_interval) {
-                Schedule::updateOrCreate(
-                    ["schedule_id" => $this->schedule_id],
-                    [
-                        "subject_subject_id" => $this->subject_id,
-                        "time_end" => $this->sched_time_end,
-                        "room_room_id" => $this->sched_room,
-                        "time_start" => $this->sched_time_start,
-                        "teacher_teacher_id" => $this->teacher_id,
-                        "section_section_id" => $this->sched_section,
-                        "day" => collect($this->day)->implode(", "),
-                    ]
-                );
-                $this->schedule_id
-                    ? session()->flash(
-                        "message",
-                        "Schedule updated successfully!"
-                    )
-                    : session()->flash(
-                        "message",
-                        "Schedule added successfully!"
-                    );
+            if ($this->conflict_counter > 0) {
+                session()->flash("warning", "Schedule has conflict!");
             } else {
-                session()->flash(
-                    "warning",
-                    "Schedule should be " . $sched_interval . " minutes long."
-                );
+                // Check if correct interval
+                if ($time_diff == $sched_interval) {
+                    Schedule::updateOrCreate(
+                        ["schedule_id" => $this->schedule_id],
+                        [
+                            "acad_year" => $this->acad_year,
+                            "semester" => $this->semester,
+                            "subject_subject_id" => $this->subject_id,
+                            "time_end" => $this->sched_time_end,
+                            "room_room_id" => $this->sched_room,
+                            "time_start" => $this->sched_time_start,
+                            "teacher_teacher_id" => $this->teacher_id,
+                            "section_section_id" => $this->sched_section,
+                            "day" => collect($this->day)->implode(", "),
+                        ]
+                    );
+                    $this->schedule_id
+                        ? session()->flash(
+                            "message",
+                            "Schedule updated successfully!"
+                        )
+                        : session()->flash(
+                            "message",
+                            "Schedule added successfully!"
+                        );
+                } else {
+                    session()->flash(
+                        "warning",
+                        "Schedule should be " .
+                            $sched_interval .
+                            " minutes long."
+                    );
+                }
+            }
+        }
+    }
+
+    public function checkConflict($schedules)
+    {
+        $this->conflict_counter = 0;
+        foreach ($schedules as $sched) {
+            if (
+                array_intersect(
+                    array_map("trim", explode(",", $sched->day)),
+                    $this->day
+                )
+            ) {
+                $this->conflict_counter++;
             }
         }
     }

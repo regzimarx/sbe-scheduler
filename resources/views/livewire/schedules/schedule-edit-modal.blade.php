@@ -11,6 +11,22 @@
                 </p>
                 <!-- Modal description -->
                 <form>
+                    <label class="block text-sm mt-4">
+                        <label class="mb-2 dark:text-gray-300">Start of academic year</label>
+                        <input
+                            class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                            placeholder="Please enter start of academic year" type="text" wire:model="acad_year"
+                            id="acad_year" />
+                    </label>
+                    @if (Auth::user()->department_dept_id == 3)
+                        <select
+                            class="block w-full mt-4 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                            wire:model="semester" id="semester">
+                            <option value="">Please select semester</option>
+                            <option value="1">First Semester</option>
+                            <option value="2">Second Semester</option>
+                        </select>
+                    @endif
                     <select
                         class="block w-full mt-4 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
                         wire:model="subject_id" id="subject_id">

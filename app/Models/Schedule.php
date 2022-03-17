@@ -16,6 +16,8 @@ class Schedule extends Model
 
     protected $primaryKey = "schedule_id";
 
+    public $timestamps = false;
+
     protected $fillable = [
         "schedule_id",
         "subject_subject_id",
@@ -25,6 +27,8 @@ class Schedule extends Model
         "time_start",
         "time_end",
         "day",
+        "acad_year",
+        "semester",
     ];
 
     public function subject()

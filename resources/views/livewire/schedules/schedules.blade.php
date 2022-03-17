@@ -8,8 +8,24 @@
         Schedules
     </h2>
 
-    <div class="mb-20 shadow-md">
-        <form class="w-full p-5">
+    <div class="mb-20 flex">
+        <form class="w-1/4 p-5">
+            <label class="block text-sm mt-4">
+                <label class="mb-2 dark:text-gray-300">Start of academic year</label>
+                <input
+                    class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                    placeholder="Please enter start of academic year" type="text" wire:model="acad_year"
+                    id="acad_year" />
+            </label>
+            @if (Auth::user()->department_dept_id == 3)
+                <select
+                    class="block w-full mt-4 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                    wire:model="semester" id="semester">
+                    <option value="">Please select semester</option>
+                    <option value="1">First Semester</option>
+                    <option value="2">Second Semester</option>
+                </select>
+            @endif
             <select
                 class="block w-full mt-4 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
                 id="sched_grade_level" wire:model="sched_grade_level">
@@ -98,15 +114,27 @@
                 </button>
             @endif
         </form>
-        <div class="w-full p-5 mt-2 mr-5">
-            <p class="text-xl text-center">Academic Year: {{ now()->year }} - {{ now()->year + 1 }}</p>
-            @if ($sched_grade_level)
-                <p class="text-xl text-center">Grade level: Grade {{ $sched_grade_level }}</p>
+        <div class="w-3/4 p-5 mt-2 mr-5">
+            <p class="text-xl text-center">Academic Year {{ $acad_year }} - {{ $acad_year + 1 }}</p>
+            @if (Auth::user()->department_dept_id == 3)
+                <p class="text-xl text-center">
+                    @if ($semester == 1)
+                        First Semester
+                    @else
+                        Second Semester
+                    @endif
+                </p>
             @endif
+            <p class="text-xl text-center">
+                @if ($sched_grade_level)
+                    Grade {{ $sched_grade_level }}
+                    @endif @if ($sched_section_object)
+                        - {{ $sched_section_object->section_name }}
+                    @endif
+            </p>
             @if ($sched_section_object)
-                <p class="text-xl text-center">Section: {{ $sched_section_object->section_name }}</p>
                 @if (Auth::user()->department_dept_id == 3)
-                    <p class="text-xl text-center">Strand:
+                    <p class="text-xl text-center">
                         @php
                             $strand = $sched_section_object->strand;
                         @endphp
@@ -120,9 +148,6 @@
                 @endif
             @endif
             </p>
-            @if ($sched_room_object)
-                <p class="text-xl text-center">Room: {{ $sched_room_object->room_name }}</p>
-            @endif
             @if ($sched_section_object)
                 <table class="table-auto w-full m-5 text-left border text-center p-2">
                     <thead class="border text-center p-2">
@@ -198,16 +223,26 @@
                     </tbody>
                 </table>
             @endif
+            @if ($sched_section_object)
+                @if (Auth::user()->department_dept_id == 3)
+                    <div class="flex justify-center pb-5"><a
+                            href="{{ route('section-preview', ['section_id' => $sched_section_object->section_id,'acad_year' => $acad_year,'semester' => $semester]) }}"
+                            target="_blank"
+                            class="text-lg mt-4 mb-4 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-green-400 border border-transparent rounded-md active:bg-green-600 hover:bg-green-700 focus:outline-none focus:shadow-outline-green">
+                            Generate PDF
+                        </a></div>
+                @else
+                    <div class="flex justify-center pb-5"><a
+                            href="{{ route('section-preview', ['section_id' => $sched_section_object->section_id,'acad_year' => $acad_year,'semester' => 0]) }}"
+                            target="_blank"
+                            class="text-lg mt-4 mb-4 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-green-400 border border-transparent rounded-md active:bg-green-600 hover:bg-green-700 focus:outline-none focus:shadow-outline-green">
+                            Generate PDF
+                        </a></div>
+                @endif
+            @endif
         </div>
-        @if ($sched_section_object)
-            <div class="flex justify-center pb-5"><a
-                    href="{{ route('section-preview', ['section_id' => $sched_section_object->section_id]) }}"
-                    target="_blank"
-                    class="text-lg mt-4 mb-4 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-green-400 border border-transparent rounded-md active:bg-green-600 hover:bg-green-700 focus:outline-none focus:shadow-outline-green">
-                    Generate PDF
-                </a></div>
-        @endif
     </div>
+
 
     <hr><br><br>
 
@@ -223,6 +258,8 @@
             'time_start' => 'Start time',
             'time_end' => 'End time',
             'day' => 'Day',
+            'semester' => 'Semester',
+            'acad_year' => 'Academic Year',
         ],
     ])
 
@@ -282,6 +319,20 @@
                                 @include('includes.order-by', ['field' => 'day'])
                             </span>
                         </th>
+                        <th class="px-4 py-2">
+                            <span class="flex flex-row items-center">
+                                Academic Year
+                                @include('includes.order-by', ['field' => 'acad_year'])
+                            </span>
+                        </th>
+                        @if (Auth::user()->department_dept_id == 3)
+                            <th class="px-4 py-2">
+                                <span class="flex flex-row items-center">
+                                    Semester
+                                    @include('includes.order-by', ['field' => 'semester'])
+                                </span>
+                            </th>
+                        @endif
                         <th class="px-4 py-2">Actions</th>
                     </tr>
                 </thead>
@@ -313,6 +364,18 @@
                                 <td class="px-4 py-2">
                                     {{ $schedule->day }}
                                 </td>
+                                <td class="px-4 py-2">
+                                    {{ $schedule->acad_year }} - {{ $schedule->acad_year + 1 }}
+                                </td>
+                                @if (Auth::user()->department_dept_id == 3)
+                                    <td class="px-4 py-2">
+                                        @if ($schedule->semester == 1)
+                                            First Semester
+                                        @else
+                                            Second Semester
+                                        @endif
+                                    </td>
+                                @endif
                                 <td class="px-4 py-2 flex justify-around">
                                     <button wire:click.prevent="edit({{ $schedule->schedule_id }})"
                                         class="mt-4 mb-4 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-yellow-400 border border-transparent rounded-md active:bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:shadow-outline-purple">

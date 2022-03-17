@@ -37,10 +37,10 @@ Route::group(
         Route::get("", DashboardLivewire::class)->name("dashboard");
         Route::get("/rooms", RoomsLivewire::class)->name("rooms");
         Route::get("/sections", SectionsLivewire::class)->name("sections");
-        Route::get("/sections/schedule/preview/{section_id}", [
-            PDFController::class,
-            "index",
-        ])->name("section-preview");
+        Route::get(
+            "/sections/schedule/preview/{section_id}/{acad_year}/{semester}",
+            [PDFController::class, "index"]
+        )->name("section-preview");
         Route::get("/teachers/schedule/preview/{teacher_id}", [
             PDFController::class,
             "load_teacher_schedules",

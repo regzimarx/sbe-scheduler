@@ -35,14 +35,14 @@
                         <img aria-hidden="true" src="{{ asset('img/scc.png') }}" alt="SCC" width="100px" />
                     </div>
                     <div class="heading text-center">
-                        <h1 class="uppercase">Southern Christian College</h1>
-                        <h2 class="uppercase">United Church of Christ in the Philippines</h2>
-                        <h2 class="uppercase">Midsayap, North Cotabato</h2>
+                        <h1 class="uppercase font-bold">Southern Christian College</h1>
+                        <h2 class="uppercase font-bold">United Church of Christ in the Philippines</h2>
+                        <h2 class="uppercase font-bold">Midsayap, North Cotabato</h2>
                         <br>
                         <h2 class="font-bold">Class Program</h2>
                         <h2 class="font-bold">Grade {{ $section->grade_level }} -
                             {{ $section->section_name }}</h2>
-                        <h2 class="font-bold text-2xl">
+                        <h2 class="font-bold">
                             @php
                                 $strand = $section->strand;
                             @endphp
@@ -54,7 +54,16 @@
                                 Accountancy, Business and Management
                             @endif
                         </h2>
-                        <h2 class="font-bold mb-5">Academic Year {{ now()->year }} - {{ now()->year + 1 }}</h2>
+                        <h2 class="font-bold">Academic Year {{ $acad_year }} - {{ $acad_year + 1 }}</h2>
+                        @if (Auth::user()->department_dept_id == 3)
+                            <h2 class="font-bold">
+                                @if ($semester == 1)
+                                    First Semester
+                                @else
+                                    Second Semester
+                                @endif
+                            </h2>
+                        @endif
                     </div>
                     <div class="uccp-logo">
                         <img aria-hidden="true" src="{{ asset('img/uccp.png') }}" alt="UCCP" width="100px" />
@@ -141,10 +150,17 @@
                         </tbody>
                     </table>
                 @endif
-
             </div>
         </div>
+        <div class="">
+            <div class="flex flex-col justify-start">
 
+                @foreach ($section->students as $key => $student)
+                    <p class="mb-1">{{ ++$key }}.
+                        {{ $student->last_name . ', ' . $student->first_name . ' ' . $student->middle_name }}</p>
+                @endforeach
+            </div>
+        </div>
         <div class="flex justify-end">
             <button onclick="window.print()" id="printBtn"
                 class="mt-4 mb-4 px-3 py-2 text-xl font-medium leading-5 text-white transition-colors duration-150 bg-blue-400 border border-transparent rounded-md active:bg-blue-600 hover:bg-blue-700 focus:outline-none focus:shadow-outline-blue">
