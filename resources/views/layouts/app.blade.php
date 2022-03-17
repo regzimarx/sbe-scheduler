@@ -38,7 +38,7 @@
         @stack('modals')
 
         @livewireScripts
-        <script src="{{ asset('js/alpine-turbolinks.js') }}"></script>
+        <script src="{{ asset('js/livewire-turbolinks.js') }}"></script>
     </div>
 </body>
 
