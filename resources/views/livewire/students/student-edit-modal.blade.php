@@ -37,20 +37,18 @@
                         <option value="14">Kindergarten 2</option>
                     @endif
                     @for ($i = $grade_level_start; $i <= $grade_level_end; $i++)
-                        <option value="{{ $i }}" @if ($grade_level == $i)
-                            selected
-                    @endif
-                    >
-                    Grade {{ $i }}
-                    </option>
+                        <option value="{{ $i }}" @if ($grade_level == $i) selected @endif>
+                            Grade {{ $i }}
+                        </option>
                     @endfor
                 </select>
-
-                <label class="block text-sm mt-4">
-                    <input
-                        class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                        placeholder="Enter gpa" type="text" wire:model="gpa" id="gpa" />
-                </label>
+                @if (Auth::user()->department_dept_id == 2 || Auth::user()->department_dept_id == 3)
+                    <label class="block text-sm mt-4">
+                        <input
+                            class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                            placeholder="Enter gpa" type="text" wire:model="gpa" id="gpa" />
+                    </label>
+                @endif
 
             </div>
             <footer

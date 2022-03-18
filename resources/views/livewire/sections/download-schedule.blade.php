@@ -40,8 +40,16 @@
                         <h2 class="uppercase font-bold">Midsayap, North Cotabato</h2>
                         <br>
                         <h2 class="font-bold">Class Program</h2>
-                        <h2 class="font-bold">Grade {{ $section->grade_level }} -
-                            {{ $section->section_name }}</h2>
+                        <h2 class="font-bold">
+                            @if ($section->grade_level == 13)
+                                Kindergarten 1
+                            @elseif ($section->grade_level == 14)
+                                Kindergarten 2
+                            @else
+                                Grade {{ $section->grade_level }}
+                            @endif -
+                            {{ $section->section_name }}
+                        </h2>
                         <h2 class="font-bold">
                             @php
                                 $strand = $section->strand;

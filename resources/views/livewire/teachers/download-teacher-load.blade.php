@@ -16,6 +16,13 @@
             }
         }
 
+        @page {
+            size: auto;
+            /* auto is the initial value */
+            margin: 0 20px;
+            /* this affects the margin in the printer settings */
+        }
+
     </style>
 </head>
 
@@ -23,105 +30,119 @@
     <div class="flex flex-col justify-center items-center py-10">
         <div class="container">
             <div class="flex flex-col justify-center items-center">
-                <h1 class="font-bold text-3xl my-5">Schedules for {{ $teacher->first_name }}
-                    {{ $teacher->middle_name }} {{ $teacher->last_name }}</h1>
-                <table class="table-auto my-5 w-full">
-                    <thead>
-                        <tr
-                            class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
-                            <th class="px-4 py-2">
-                                <span class="flex flex-row items-center">
-                                    Time/Day
+                <div class="flex justify-around w-full">
+                    <div class="scc-logo">
+                        <img aria-hidden="true" src="{{ asset('img/scc.png') }}" alt="SCC" width="100px" />
+                    </div>
+                    <div class="heading text-center">
+                        <h1 class="uppercase font-bold">Southern Christian College</h1>
+                        <h2 class="uppercase font-bold">United Church of Christ in the Philippines</h2>
+                        <h2 class="uppercase font-bold">Midsayap, North Cotabato</h2>
+                        <br>
+                        <h2 class="font-bold">{{ $teacher->getFullNameAttribute() }}</h2>
+                    </div>
+                    <div class="uccp-logo">
+                        <img aria-hidden="true" src="{{ asset('img/uccp.png') }}" alt="UCCP" width="100px" />
+                    </div>
+                </div>
 
-                                </span>
-                            </th>
-                            <th class="px-4 py-2">
-                                <span class="flex flex-row items-center">
-                                    Monday
-
-                                </span>
-                            </th>
-                            <th class="px-4 py-2">
-                                <span class="flex flex-row items-center">
-                                    Tuesday
-
-                                </span>
-                            </th>
-                            <th class="px-4 py-2">
-                                <span class="flex flex-row items-center">
-                                    Wednesday
-
-                                </span>
-                            </th>
-                            <th class="px-4 py-2">
-                                <span class="flex flex-row items-center">
-                                    Thursday
-
-                                </span>
-                            </th>
-                            <th class="px-4 py-2">
-                                <span class="flex flex-row items-center">
-                                    Friday
-
-                                </span>
-                            </th>
-
+                <table class="table-auto w-full m-5 text-left border text-center p-2">
+                    <thead class="border text-center p-2">
+                        <tr class="border text-center p-2">
+                            <th class="border text-center p-2">Time</th>
+                            <th class="border text-center p-2">Monday</th>
+                            <th class="border text-center p-2">Tuesday</th>
+                            <th class="border text-center p-2">Wednesday</th>
+                            <th class="border text-center p-2">Thursday</th>
+                            <th class="border text-center p-2">Friday</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
-                        @if ($teacher->schedules->count())
-                            @foreach ($teacher->schedules as $key => $schedule)
-                                <tr class="text-gray-700 dark:text-gray-400">
-                                    <td class="px-4 py-2">
-                                        {{ \Carbon\Carbon::createFromFormat('H:i:s', $schedule->time_start)->format('h:i A') }}
-                                        to
-                                        {{ \Carbon\Carbon::createFromFormat('H:i:s', $schedule->time_end)->format('h:i A') }}
-                                    </td>
-                                    <td class="px-4 py-2">
-                                        @php
-                                            $days_array = explode(', ', $schedule->day);
-                                            if (in_array('Monday', $days_array)) {
-                                                echo $schedule->subject->subject_name;
-                                            }
-                                        @endphp
-                                    </td>
-                                    <td class="px-4 py-2">
-                                        @php
-                                            if (in_array('Tuesday', $days_array)) {
-                                                echo $schedule->subject->subject_name;
-                                            }
-                                        @endphp
-                                    </td>
-                                    <td class="px-4 py-2">
-                                        @php
-                                            if (in_array('Wednesday', $days_array)) {
-                                                echo $schedule->subject->subject_name;
-                                            }
-                                        @endphp
-                                    </td>
-                                    <td class="px-4 py-2">
-                                        @php
-                                            if (in_array('Thursday', $days_array)) {
-                                                echo $schedule->subject->subject_name;
-                                            }
-                                        @endphp
-                                    </td>
-                                    <td class="px-4 py-2">
-                                        @php
-                                            if (in_array('Friday', $days_array)) {
-                                                echo $schedule->subject->subject_name;
-                                            }
-                                        @endphp
-                                    </td>
-                                </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                <td colspan="9">
-                                    @include('includes.no-result')
+                    <tbody class="border text-center p-2">
+                        @foreach ($teacher->schedules->unique('time_start') as $time)
+                            <tr class="border text-center p-2">
+                                <td class="border text-center p-2">
+                                    {{ \Carbon\Carbon::createFromFormat('H:i:s', $time->time_start)->format('h:i A') }}
+                                    -
+                                    {{ \Carbon\Carbon::createFromFormat('H:i:s', $time->time_end)->format('h:i A') }}
+                                </td>
+                                <td class="border text-center p-2">
+                                    @foreach ($teacher->schedules as $sched)
+                                        @if (in_array('Monday', explode(', ', $sched->day)) && $time->time_start == $sched->time_start)
+                                            <span class="font-semibold">{{ $sched->subject->subject_name }}</span>
+                                            <br>
+                                            <p class="italic">
+
+                                                Grade {{ $sched->section->grade_level }} -
+                                                {{ $sched->section->section_name }} |
+                                                {{ $sched->room->room_name }}
+                                            </p>
+                                        @endif
+                                    @endforeach
+                                </td>
+                                <td class="border text-center p-2">
+                                    @foreach ($teacher->schedules as $sched)
+                                        @if (in_array('Tuesday', explode(', ', $sched->day)) && $time->time_start == $sched->time_start)
+                                            <span class="font-semibold">{{ $sched->subject->subject_name }}</span>
+                                            <br>
+                                            <p class="italic">
+
+                                                Grade {{ $sched->section->grade_level }} -
+                                                {{ $sched->section->section_name }} |
+                                                {{ $sched->room->room_name }}
+                                            </p>
+                                        @endif
+                                    @endforeach
+                                </td>
+                                <td class="border text-center p-2">
+                                    @foreach ($teacher->schedules as $sched)
+                                        @if (in_array('Wednesday', explode(', ', $sched->day)) && $time->time_start == $sched->time_start)
+                                            <span class="font-semibold">{{ $sched->subject->subject_name }}</span>
+                                            <br>
+                                            <p class="italic">
+
+                                                @if ($sched->section->grade_level == 13)
+                                                    Kindergarten 1
+                                                @elseif ($sched->section->grade_level == 14)
+                                                    Kindergarten 2
+                                                @else
+                                                    Grade {{ $sched->section->grade_level }}
+                                                @endif -
+                                                {{ $sched->section->section_name }} |
+                                                {{ $sched->room->room_name }}
+                                            </p>
+                                        @endif
+                                    @endforeach
+                                </td>
+                                <td class="border text-center p-2">
+                                    @foreach ($teacher->schedules as $sched)
+                                        @if (in_array('Thursday', explode(', ', $sched->day)) && $time->time_start == $sched->time_start)
+                                            <span class="font-semibold">{{ $sched->subject->subject_name }}</span>
+                                            <br>
+                                            <p class="italic">
+
+                                                Grade {{ $sched->section->grade_level }} -
+                                                {{ $sched->section->section_name }} |
+                                                {{ $sched->room->room_name }}
+                                            </p>
+                                        @endif
+                                    @endforeach
+                                </td>
+                                <td class="border text-center p-2">
+                                    @foreach ($teacher->schedules as $sched)
+                                        @if (in_array('Friday', explode(', ', $sched->day)) && $time->time_start == $sched->time_start)
+                                            <span class="font-semibold">{{ $sched->subject->subject_name }}</span>
+                                            <br>
+                                            <p class="italic">
+
+                                                Grade {{ $sched->section->grade_level }} -
+                                                {{ $sched->section->section_name }} |
+                                                {{ $sched->room->room_name }}
+                                            </p>
+                                        @endif
+                                    @endforeach
                                 </td>
                             </tr>
-                        @endif
+                        @endforeach
                     </tbody>
                 </table>
 

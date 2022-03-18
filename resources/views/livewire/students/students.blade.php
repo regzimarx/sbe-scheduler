@@ -20,13 +20,15 @@
     </h2>
 
     <!-- With avatar -->
-    @include('includes.search', ["fields" => [
-    "first_name" => "First name",
-    "middle_name" => "Middle name",
-    "last_name" => "Last name",
-    "grade_level" => "Grade level",
-    "gpa" => "GPA"
-    ]])
+    @include('includes.search', [
+        'fields' => [
+            'first_name' => 'First name',
+            'middle_name' => 'Middle name',
+            'last_name' => 'Last name',
+            'grade_level' => 'Grade level',
+            'gpa' => 'GPA',
+        ],
+    ])
 
     <div class="w-full my-5 overflow-hidden rounded-lg shadow-xs">
         @include('livewire.students.student-edit-modal')
@@ -42,44 +44,48 @@
                         <th class="px-4 py-2">
                             <span class="flex flex-row items-center">
                                 Record ID
-                                @include('includes.order-by', ["field" => 'student_id'])
+                                @include('includes.order-by', ['field' => 'student_id'])
                             </span>
                         </th>
                         <th class="px-4 py-2">
                             <span class="flex flex-row items-center">
                                 First name
-                                @include('includes.order-by', ["field" => 'first_name'])
+                                @include('includes.order-by', ['field' => 'first_name'])
                             </span>
                         </th>
                         <th class="px-4 py-2">
                             <span class="flex flex-row items-center">
                                 Middle name
-                                @include('includes.order-by', ["field" => 'middle_name'])
+                                @include('includes.order-by', ['field' => 'middle_name'])
                             </span>
                         </th>
                         <th class="px-4 py-2">
                             <span class="flex flex-row items-center">
                                 Last name
-                                @include('includes.order-by', ["field" => 'last_name'])
+                                @include('includes.order-by', ['field' => 'last_name'])
                             </span>
                         </th>
                         <th class="px-4 py-2">
                             <span class="flex flex-row items-center">
                                 Grade Level
-                                @include('includes.order-by', ["field" => 'grade_level'])
+                                @include('includes.order-by', ['field' => 'grade_level'])
                             </span>
                         </th>
-                        <th class="px-4 py-2">
-                            <span class="flex flex-row items-center">
-                                GPA
-                                @include('includes.order-by', ["field" => 'gpa'])
-                            </span>
-                        </th>
+                        @if (Auth::user()->department_dept_id == 2 || Auth::user()->department_dept_id == 3)
+                            <th class="px-4 py-2">
+                                <span class="flex flex-row items-center">
+                                    GPA
+                                    @include('includes.order-by', ['field' => 'gpa'])
+                                </span>
+                            </th>
+                        @endif
                         @if (Auth::user()->department_dept_id == null)
                             <th class="px-4 py-2">
                                 <span class="flex flex-row items-center">
                                     Department
-                                    @include('includes.order-by', ["field" => 'department_dept_id'])
+                                    @include('includes.order-by', [
+                                        'field' => 'department_dept_id',
+                                    ])
                                 </span>
                             </th>
                         @endif
@@ -111,15 +117,23 @@
                                         Grade {{ $student->grade_level }}
                                     @endif
                                 </td>
-                                <td class="px-4 py-2">
-                                    {{ $student->gpa }}
-                                </td>
+                                @if (Auth::user()->department_dept_id == 2 || Auth::user()->department_dept_id == 3)
+                                    <td class="px-4 py-2">
+                                        {{ $student->gpa }}
+                                    </td>
+                                @endif
                                 @if (Auth::user()->department_dept_id == null)
                                     <td class="px-4 py-2">
                                         @php
                                             $dept = $student->department_dept_id;
                                         @endphp
-                                        @if ($dept == 1) Elementary @elseif ($dept == 2) Junior High School @elseif ($dept == 3) Senior High School @endif
+                                        @if ($dept == 1)
+                                            Elementary
+                                        @elseif ($dept == 2)
+                                            Junior High School
+                                        @elseif ($dept == 3)
+                                            Senior High School
+                                        @endif
                                     </td>
                                 @endif
                                 <td class="px-4 py-2">
@@ -165,11 +179,10 @@
                             </tr>
                             @if ($openMore && $student->student_id == $studentMore->student_id)
                                 <tr wire:model="openMore">
-                                    <td colspan="   @if (Auth::user()->department_dept_id == null)
-                                        8
+                                    <td
+                                        colspan="   @if (Auth::user()->department_dept_id == null) 8
                                     @else
-                                        7
-                                        @endif">
+                                        7 @endif">
                                         <div class="m-10" class="transition duration-500 ease-in-out">
                                             <p
                                                 class="mb-5 text-lg text-center font-semibold text-gray-700 dark:text-gray-300">

@@ -160,6 +160,10 @@ class StudentsLivewire extends Component
             "grade_level" => "required",
         ]);
 
+        if (Auth::user()->department_dept_id == 1) {
+            $this->gpa = 0;
+        }
+
         Student::updateOrCreate(
             ["student_id" => $this->student_id],
             [

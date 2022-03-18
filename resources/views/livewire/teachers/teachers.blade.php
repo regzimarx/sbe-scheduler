@@ -20,11 +20,13 @@
     </h2>
 
     <!-- With avatar -->
-    @include('includes.search', ["fields" => [
-    "first_name" => "First name",
-    "middle_name" => "Middle name",
-    "last_name" => "Last name"
-    ]])
+    @include('includes.search', [
+        'fields' => [
+            'first_name' => 'First name',
+            'middle_name' => 'Middle name',
+            'last_name' => 'Last name',
+        ],
+    ])
 
     <div class="w-full my-5 overflow-hidden rounded-lg shadow-xs">
         @include('livewire.teachers.teacher-edit-modal')
@@ -37,32 +39,34 @@
                         <th class="px-4 py-2">
                             <span class="flex flex-row items-center">
                                 Record ID
-                                @include('includes.order-by', ["field" => 'teacher_id'])
+                                @include('includes.order-by', ['field' => 'teacher_id'])
                             </span>
                         </th>
                         <th class="px-4 py-2">
                             <span class="flex flex-row items-center">
                                 First name
-                                @include('includes.order-by', ["field" => 'first_name'])
+                                @include('includes.order-by', ['field' => 'first_name'])
                             </span>
                         </th>
                         <th class="px-4 py-2">
                             <span class="flex flex-row items-center">
                                 Middle name
-                                @include('includes.order-by', ["field" => 'middle_name'])
+                                @include('includes.order-by', ['field' => 'middle_name'])
                             </span>
                         </th>
                         <th class="px-4 py-2">
                             <span class="flex flex-row items-center">
                                 Last name
-                                @include('includes.order-by', ["field" => 'last_name'])
+                                @include('includes.order-by', ['field' => 'last_name'])
                             </span>
                         </th>
                         @if (Auth::user()->department_dept_id == null)
                             <th class="px-4 py-2">
                                 <span class="flex flex-row items-center">
                                     Department
-                                    @include('includes.order-by', ["field" => "department_dept_id"])
+                                    @include('includes.order-by', [
+                                        'field' => 'department_dept_id',
+                                    ])
                                 </span>
                             </th>
                         @endif
@@ -94,7 +98,13 @@
                                         @php
                                             $dept = $teacher->department_dept_id;
                                         @endphp
-                                        @if ($dept == 1) Elementary @elseif ($dept == 2) Junior High School @elseif ($dept == 3) Senior High School @endif
+                                        @if ($dept == 1)
+                                            Elementary
+                                        @elseif ($dept == 2)
+                                            Junior High School
+                                        @elseif ($dept == 3)
+                                            Senior High School
+                                        @endif
                                     </td>
                                 @endif
                                 <td class="px-4 py-2 flex">
@@ -125,25 +135,7 @@
                                     </button>
                                     <!-- Toggle buttons -->
 
-                                    @if ($openMore && $teach->teacher_id == $teacher->teacher_id)
-                                        <button wire:click.prevent="closeMoreModal()"
-                                            class="mt-4 mb-4 ml-1 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-gray-400 border border-transparent rounded-md active:bg-gray-600 hover:bg-gray-700 focus:outline-none focus:shadow-outline-gray">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                                viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M5 15l7-7 7 7" />
-                                            </svg>
-                                        </button>
-                                    @else
-                                        <button wire:click.prevent="openMoreModal({{ $teacher->teacher_id }})"
-                                            class="mt-4 mb-4 ml-1 px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-gray-400 border border-transparent rounded-md active:bg-gray-600 hover:bg-gray-700 focus:outline-none focus:shadow-outline-gray">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                                viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M19 9l-7 7-7-7" />
-                                            </svg>
-                                        </button>
-                                    @endif
+
                                 </td>
                             </tr>
                             @if ($openMore && $teach->teacher_id == $teacher->teacher_id)
@@ -155,60 +147,99 @@
                                                 Schedules
                                             </p>
                                         </div>
-                                        <table class="table-auto w-full m-5 text-left">
-                                            <thead>
-                                                <tr>
-                                                    <th>Time/Day</th>
-                                                    <th>Monday</th>
-                                                    <th>Tuesday</th>
-                                                    <th>Wednesday</th>
-                                                    <th>Thursday</th>
-                                                    <th>Friday</th>
+                                        <table class="table-auto w-full m-5 text-left border text-center p-2">
+                                            <thead class="border text-center p-2">
+                                                <tr class="border text-center p-2">
+                                                    <th class="border text-center p-2">Time</th>
+                                                    <th class="border text-center p-2">Monday</th>
+                                                    <th class="border text-center p-2">Tuesday</th>
+                                                    <th class="border text-center p-2">Wednesday</th>
+                                                    <th class="border text-center p-2">Thursday</th>
+                                                    <th class="border text-center p-2">Friday</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
-                                                @foreach ($teacher->schedules as $sched)
-                                                    <tr>
-                                                        <td>{{ \Carbon\Carbon::createFromFormat('H:i:s', $sched->time_start)->format('h:i A') }}
+                                            <tbody class="border text-center p-2">
+                                                @foreach ($teacher->schedules->unique('time_start') as $time)
+                                                    <tr class="border text-center p-2">
+                                                        <td class="border text-center p-2">
+                                                            {{ \Carbon\Carbon::createFromFormat('H:i:s', $time->time_start)->format('h:i A') }}
+                                                            -
+                                                            {{ \Carbon\Carbon::createFromFormat('H:i:s', $time->time_end)->format('h:i A') }}
                                                         </td>
-                                                        <td>
-                                                            @php
-                                                                $days_array = explode(', ', $sched->day);
-                                                                if (in_array('Monday', $days_array)) {
-                                                                    echo $sched->subject->subject_name;
-                                                                }
-                                                            @endphp
+                                                        <td class="border text-center p-2">
+                                                            @foreach ($teacher->schedules as $sched)
+                                                                @if (in_array('Monday', explode(', ', $sched->day)) && $time->time_start == $sched->time_start)
+                                                                    <p class="font-semibold">
+                                                                        {{ $sched->subject->subject_name }}
+                                                                    </p>
+                                                                    <p class="italic">
+                                                                        {{ $sched->section->section_name }}
+                                                                    </p>
+                                                                    <p class="italic">
+                                                                        {{ $sched->room->room_name }}
+                                                                    </p>
+                                                                @endif
+                                                            @endforeach
                                                         </td>
-                                                        <td>
-                                                            @php
-
-                                                                if (in_array('Tuesday', $days_array)) {
-                                                                    echo $sched->subject->subject_name;
-                                                                }
-                                                            @endphp
+                                                        <td class="border text-center p-2">
+                                                            @foreach ($teacher->schedules as $sched)
+                                                                @if (in_array('Tuesday', explode(', ', $sched->day)) && $time->time_start == $sched->time_start)
+                                                                    <p class="font-semibold">
+                                                                        {{ $sched->subject->subject_name }}
+                                                                    </p>
+                                                                    <p class="italic">
+                                                                        {{ $sched->section->section_name }}
+                                                                    </p>
+                                                                    <p class="italic">
+                                                                        {{ $sched->room->room_name }}
+                                                                    </p>
+                                                                @endif
+                                                            @endforeach
                                                         </td>
-                                                        <td>
-                                                            @php
-
-                                                                if (in_array('Wednesday', $days_array)) {
-                                                                    echo $sched->subject->subject_name;
-                                                                }
-                                                            @endphp
+                                                        <td class="border text-center p-2">
+                                                            @foreach ($teacher->schedules as $sched)
+                                                                @if (in_array('Wednesday', explode(', ', $sched->day)) && $time->time_start == $sched->time_start)
+                                                                    <p class="font-semibold">
+                                                                        {{ $sched->subject->subject_name }}
+                                                                    </p>
+                                                                    <p class="italic">
+                                                                        {{ $sched->section->section_name }}
+                                                                    </p>
+                                                                    <p class="italic">
+                                                                        {{ $sched->room->room_name }}
+                                                                    </p>
+                                                                @endif
+                                                            @endforeach
                                                         </td>
-                                                        <td>
-                                                            @php
-
-                                                                if (in_array('Thursday', $days_array)) {
-                                                                    echo $sched->subject->subject_name;
-                                                                }
-                                                            @endphp
+                                                        <td class="border text-center p-2">
+                                                            @foreach ($teacher->schedules as $sched)
+                                                                @if (in_array('Thursday', explode(', ', $sched->day)) && $time->time_start == $sched->time_start)
+                                                                    <p class="font-semibold">
+                                                                        {{ $sched->subject->subject_name }}
+                                                                    </p>
+                                                                    <p class="italic">
+                                                                        {{ $sched->section->section_name }}
+                                                                    </p>
+                                                                    <p class="italic">
+                                                                        {{ $sched->room->room_name }}
+                                                                    </p>
+                                                                @endif
+                                                            @endforeach
                                                         </td>
-                                                        <td>
-                                                            @php
-                                                                if (in_array('Friday', $days_array)) {
-                                                                    echo $sched->subject->subject_name;
-                                                                }
-                                                            @endphp
+                                                        <td class="border text-center p-2">
+                                                            @foreach ($teacher->schedules as $sched)
+                                                                @if (in_array('Friday', explode(', ', $sched->day)) && $time->time_start == $sched->time_start)
+                                                                    <p class="font-semibold">
+                                                                        {{ $sched->subject->subject_name }}
+                                                                    </p>
+                                                                    <p class="italic">
+                                                                        {{ $sched->section->section_name }}
+                                                                    </p>
+                                                                    <p class="italic">
+                                                                        {{ $sched->room->room_name }}
+                                                                    </p>
+                                                                @endif
+                                                            @endforeach
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -220,11 +251,10 @@
                         @endforeach
                     @else
                         <tr>
-                            <td colspan="                     @if (Auth::user()->department_dept_id == null)
-                                6
+                            <td
+                                colspan="                     @if (Auth::user()->department_dept_id == null) 6
                             @else
-                                5
-                                @endif">
+                                5 @endif">
                                 @include('includes.no-result')
                             </td>
                         </tr>
