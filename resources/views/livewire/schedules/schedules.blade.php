@@ -126,15 +126,14 @@
                 </p>
             @endif
             <p class="text-xl text-center">
-                @if ($sched_grade_level)
+                @if ($section)
                     @if ($section->grade_level == 13)
                         Kindergarten 1
                     @elseif ($section->grade_level == 14)
                         Kindergarten 2
                     @else
                         Grade {{ $section->grade_level }}
-                    @endif -
-                    {{ $section->section_name }}
+                    @endif
                     @endif @if ($sched_section_object)
                         - {{ $sched_section_object->section_name }}
                     @endif

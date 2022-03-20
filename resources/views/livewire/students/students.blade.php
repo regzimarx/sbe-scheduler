@@ -71,6 +71,18 @@
                                 @include('includes.order-by', ['field' => 'grade_level'])
                             </span>
                         </th>
+                        <th class="px-4 py-2">
+                            <span class="flex flex-row items-center">
+                                Section
+
+                            </span>
+                        </th>
+                        <th class="px-4 py-2">
+                            <span class="flex flex-row items-center">
+                                Strand
+
+                            </span>
+                        </th>
                         @if (Auth::user()->department_dept_id == 2 || Auth::user()->department_dept_id == 3)
                             <th class="px-4 py-2">
                                 <span class="flex flex-row items-center">
@@ -116,6 +128,25 @@
                                     @else
                                         Grade {{ $student->grade_level }}
                                     @endif
+                                </td>
+                                <td class="px-4 py-2">
+                                    @foreach ($student->section as $section)
+                                        {{ $section->section_name }}
+                                    @endforeach
+                                </td>
+                                <td class="px-4 py-2">
+                                    @foreach ($student->section as $section)
+                                        @php
+                                            $strand = $section->strand;
+                                        @endphp
+                                        @if ($strand == 'stem')
+                                            Science, Technology, Engineering, and Mathematics
+                                        @elseif ($strand == 'humss')
+                                            Humanities and Social Sciences
+                                        @elseif ($strand == 'abm')
+                                            Accountancy, Business and Management
+                                        @endif
+                                    @endforeach
                                 </td>
                                 @if (Auth::user()->department_dept_id == 2 || Auth::user()->department_dept_id == 3)
                                     <td class="px-4 py-2">
